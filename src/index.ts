@@ -19,7 +19,7 @@ class SimpleGame {
 		this.game = new Phaser.Game(1280, 720, Phaser.AUTO, "content");
 		this.game.state.add('loading', LoadingState);
 		this.game.state.add('game', GameState);
-		this.game.state.start('loading');
+		this.game.state.start('game');
 	}
 }
 
