@@ -43,13 +43,15 @@ export default class GameState extends Phaser.State {
 			if (a.player) {
 				let p = <Player>a.player;
 				//RIP
-				console.log('RIP');
+				console.log('RIP ' + p.playerNumber);
+				this.createExplosion(p.sprite.x, p.sprite.y);
 				p.sprite.destroy();
 			}
 			if (b.player) {
 				let p = <Player>b.player;
 				//RIP
-				console.log('RIP');
+				console.log('RIP ' + p.playerNumber);
+				this.createExplosion(p.sprite.x, p.sprite.y);
 				p.sprite.destroy();
 			}
 
