@@ -5,6 +5,11 @@ import { Player } from './player';
 
 declare function require(url: string): string;
 
+let globalScore = [
+	0,0,0,0
+];
+
+
 
 export default class GameState extends Phaser.State {
 
@@ -32,6 +37,14 @@ export default class GameState extends Phaser.State {
 	}
 
 	create() {
+		let xRight = 80;
+		let yBot = 100;
+
+		this.add.text(10, 10, '' + globalScore[0], { font: '100px Arial', fill: '#ffffff' });
+		this.add.text(Globals.ScreenWidth - xRight, 10, '' + globalScore[1], { font: '100px Arial', fill: '#ffffff' });
+		this.add.text(Globals.ScreenWidth - xRight, Globals.ScreenHeight - yBot, '' + globalScore[2], { font: '100px Arial', fill: '#ffffff' });
+		this.add.text(10, Globals.ScreenHeight - yBot, '' + globalScore[3], { font: '100px Arial', fill: '#ffffff' });
+
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad1, 1));
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad2, 2));
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad3, 3));
@@ -84,6 +97,8 @@ export default class GameState extends Phaser.State {
 
 				let text = this.add.text(this.world.centerX, this.world.centerY, ' PLAYER ' + alive[0].playerNumber + ' WINS! ', { font: '100px Bangers', fill: '#dddddd', align: 'center' });
 				text.anchor.setTo(0.5, 0.5);
+
+				globalScore[alive[0].playerNumber - 1]++;
 
 			} else if (amountAlive == 0) {
 				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px Bangers', fill: '#dddddd', align: 'center' });

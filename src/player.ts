@@ -92,15 +92,17 @@ export class Player {
 		if (timeSinceLast > timeBetweenShots && length > 0.7) {
 			this.lastShot = this.pad.game.time.totalElapsedSeconds();
 
+			let spreadAmount = 10;
+
 			this.fireShot(thing);
 			if (this.powerUp == PowerUp.SpreadShot) {
-			thing = thing.rotate(0, 0, 8, true);
+			thing = thing.rotate(0, 0, spreadAmount, true);
 			this.fireShot(thing);
-			thing = thing.rotate(0, 0, -16, true);
+			thing = thing.rotate(0, 0, -2 * spreadAmount, true);
 			this.fireShot(thing);
-			thing = thing.rotate(0, 0, 24, true);
+			thing = thing.rotate(0, 0, 3 * spreadAmount, true);
 			this.fireShot(thing);
-			thing = thing.rotate(0, 0, -32, true);
+			thing = thing.rotate(0, 0, -4 * spreadAmount, true);
 			this.fireShot(thing);
 			}
 		}
