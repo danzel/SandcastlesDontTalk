@@ -75,7 +75,6 @@ export default class GameState extends Phaser.State {
 			}
 		});
 
-		console.log(this.gameHasEnded);
 		if (!this.gameHasEnded) {
 			let alive = this.players.filter(p => !p.isDead);
 			let amountAlive = alive.length;
@@ -96,25 +95,25 @@ export default class GameState extends Phaser.State {
 
 	createExplosion(x, y) {
 
-		[
-			[1, 0],
-			[0.71, 0.71],
-			[0, 1],
-			[0, -1],
-			[-1, 0],
-			[-0.71, 0.71],
-			[0.71, -0.71],
-			[-0.71, 0.71]
-		].forEach(dir => {
-			let shot = this.game.add.sprite(x + dir[0] * 20, y + dir[1] * 20);
+		let directions = new Array<Phaser.Point>();
+
+		let explosionSize = 8;
+		for (var i = 0; i < explosionSize; i++) {
+			let a = new Phaser.Point(1, 0);
+			a = a.rotate(0, 0, i * 360 / explosionSize, true);
+			directions.push(a);
+		}
+
+		directions.forEach(dir => {
+			let shot = this.game.add.sprite(x + dir.x * 20, y + dir.y * 20);
 
 			this.game.physics.arcade.enable(shot);
 			let shotBody = <Phaser.Physics.Arcade.Body>shot.body;
 			shotBody.setCircle(Globals.ShotRadius);
 			shotBody.collideWorldBounds = true;
 			shotBody.velocity.set(
-				dir[0] * Globals.ShotSpeed,
-				dir[1] * Globals.ShotSpeed
+				dir.x * Globals.ShotSpeed,
+				dir.y * Globals.ShotSpeed
 			);
 			shotBody.bounce.set(1);
 
