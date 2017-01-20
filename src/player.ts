@@ -33,22 +33,19 @@ export class Player {
 			//right bumper
 			if (inputIndex == 5) {
 				const shotAwayDist = 30;
-				const shotRadius = 5;
-
-				const shotSpeed = 500;
 
 				let shot = this.pad.game.add.sprite(
-					this.sprite.x + playerRadius - shotRadius + this.pad.axis(2) * shotAwayDist,
-					this.sprite.y + playerRadius - shotRadius + this.pad.axis(3) * shotAwayDist);
+					this.sprite.x + playerRadius - Globals.ShotRadius + this.pad.axis(2) * shotAwayDist,
+					this.sprite.y + playerRadius - Globals.ShotRadius + this.pad.axis(3) * shotAwayDist);
 
 				this.pad.game.physics.arcade.enable(shot);
 				let shotBody = <Phaser.Physics.Arcade.Body>shot.body;
-				shotBody.setCircle(shotRadius);
+				shotBody.setCircle(Globals.ShotRadius);
 				shotBody.collideWorldBounds = true;
 
 				shotBody.velocity.set(
-					this.pad.axis(2) * shotSpeed,
-					this.pad.axis(3) * shotSpeed
+					this.pad.axis(2) * Globals.ShotSpeed,
+					this.pad.axis(3) * Globals.ShotSpeed
 				);
 				shotBody.bounce.set(1);
 				(<any>shot).shotBy = this; //HACK
