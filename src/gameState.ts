@@ -39,7 +39,32 @@ export default class GameState extends Phaser.State {
 
 		this.players.forEach(p => p.update());
 
-		this.game.physics.arcade.collide(this.collisionGroup)
+		this.game.physics.arcade.collide(this.collisionGroup, undefined, (a, b, c) => {
+			if (a.player) {
+				let p = <Player>a;
+				//RIP
+				console.log('RIP');
+			}
+			if (b.player) {
+				let p = <Player>b;
+				//RIP
+				console.log('RIP');
+			}
+
+			if (a.shotBy && b.shotBy && a.shotBy != b.shotBy) {
+				console.log('collideshot');
+				let aSprite = <Phaser.Sprite>a;
+				let bSprite = <Phaser.Sprite>b;
+
+				let midX = (aSprite.x + bSprite.x) / 2;
+				let midY = (aSprite.y + bSprite.y) / 2;
+
+				aSprite.destroy();
+				bSprite.destroy();
+
+				
+			}
+		});
 	}
 
 
@@ -47,9 +72,6 @@ export default class GameState extends Phaser.State {
 		if (Globals.DebugRender) {
 			this.players.forEach(p => {
 				this.game.debug.body(p.sprite);
-				p.shotGroup.children.forEach(s => {
-					this.game.debug.body(<any>s);
-				});
 			});
 
 			this.collisionGroup.children.forEach(c => {

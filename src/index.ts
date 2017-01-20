@@ -2,6 +2,7 @@ import 'pixi';
 import 'p2';
 import * as Phaser from 'phaser';
 import './css/reset.css';
+import * as Globals from './globals';
 
 import GameState from './gameState';
 import LoadingState from './loadingState';
@@ -16,7 +17,7 @@ class SimpleGame {
 	cursors: Phaser.CursorKeys;
 
 	constructor() {
-		this.game = new Phaser.Game(1280, 720, Phaser.AUTO, "content");
+		this.game = new Phaser.Game(Globals.ScreenWidth, Globals.ScreenHeight, Phaser.AUTO, "content");
 		this.game.state.add('loading', LoadingState);
 		this.game.state.add('game', GameState);
 		this.game.state.start('game');

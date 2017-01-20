@@ -15,23 +15,19 @@ export class Player {
 
 	sprite: Phaser.Sprite;
 	body: Phaser.Physics.Arcade.Body;
-	shotGroup: Phaser.Group;
 
 	constructor(private globalCollisionGroup: Phaser.Group, public pad: Phaser.SinglePad, public playerNumber: number) {
 
-		pad.deadZone = 0.2;
+		pad.deadZone = 0;
 
 		this.sprite = pad.game.add.sprite(startPoses[playerNumber - 1][0], startPoses[playerNumber - 1][1], 'player');
+		(<any>this.sprite).player = this;//HACK
 		globalCollisionGroup.add(this.sprite);
 
 		this.pad.game.physics.arcade.enable(this.sprite);
 		this.body = <Phaser.Physics.Arcade.Body>this.sprite.body;
 		this.body.setCircle(playerRadius, 0, 0);
 		this.body.collideWorldBounds = true;
-
-		this.shotGroup = this.pad.game.add.physicsGroup(Phaser.Physics.ARCADE);
-
-		this.body.checkCollision.any = true;
 
 		pad.onDownCallback = (inputIndex: number) => {
 			//right bumper
@@ -41,22 +37,23 @@ export class Player {
 
 				const shotSpeed = 500;
 
-				console.log(this.pad.axis(2))
 				let shot = this.pad.game.add.sprite(
 					this.sprite.x + playerRadius - shotRadius + this.pad.axis(2) * shotAwayDist,
 					this.sprite.y + playerRadius - shotRadius + this.pad.axis(3) * shotAwayDist);
-				//+ this.body.velocity.y / speedDivider
+
 				this.pad.game.physics.arcade.enable(shot);
 				let shotBody = <Phaser.Physics.Arcade.Body>shot.body;
 				shotBody.setCircle(shotRadius);
+				shotBody.collideWorldBounds = true;
 
 				shotBody.velocity.set(
-					this.pad.axis(2) * shotSpeed,// + this.body.velocity.x,
-					this.pad.axis(3) * shotSpeed// + this.body.velocity.y
+					this.pad.axis(2) * shotSpeed,
+					this.pad.axis(3) * shotSpeed
 				);
+				shotBody.bounce.set(1);
+				(<any>shot).shotBy = this; //HACK
 
 				globalCollisionGroup.add(shot);
-				//this.shotGroup.add(shot)
 			}
 		}
 	}
