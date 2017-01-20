@@ -12,18 +12,19 @@ export default class GameState extends Phaser.State {
 
 	collisionGroup: Phaser.Group;
 
+	gameHasEnded = false;
+
 	init() {
 		//TODO
 	}
 
 	preload() {
+		this.players.length = 0;
+		this.gameHasEnded = false;
 
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 
 		this.input.gamepad.start();
-
-		let text = this.add.text(this.world.centerX, this.world.centerY, 'Loaded, lets go ', { font: '42px Bangers', fill: '#dddddd', align: 'center' });
-		text.anchor.setTo(0.5, 0.5);
 
 		this.collisionGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
 
@@ -46,17 +47,15 @@ export default class GameState extends Phaser.State {
 		this.game.physics.arcade.collide(this.collisionGroup, undefined, (a, b, c) => {
 			if (a.player) {
 				let p = <Player>a.player;
-				//RIP
-				console.log('RIP ' + p.playerNumber);
 				this.createExplosion(p.sprite.x, p.sprite.y);
 				p.sprite.destroy();
+				p.isDead = true;
 			}
 			if (b.player) {
 				let p = <Player>b.player;
-				//RIP
-				console.log('RIP ' + p.playerNumber);
 				this.createExplosion(p.sprite.x, p.sprite.y);
 				p.sprite.destroy();
+				p.isDead = true;
 			}
 
 			if (a.shotBy && b.shotBy && a.shotBy != b.shotBy) {
@@ -75,6 +74,24 @@ export default class GameState extends Phaser.State {
 
 			}
 		});
+
+		console.log(this.gameHasEnded);
+		if (!this.gameHasEnded) {
+			let alive = this.players.filter(p => !p.isDead);
+			let amountAlive = alive.length;
+			this.gameHasEnded = amountAlive <= 1;
+
+			if (amountAlive == 1) {
+
+				let text = this.add.text(this.world.centerX, this.world.centerY, ' PLAYER ' + alive[0].playerNumber + ' WINS! ', { font: '100px Bangers', fill: '#dddddd', align: 'center' });
+				text.anchor.setTo(0.5, 0.5);
+
+			} else if (amountAlive == 0) {
+				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px Bangers', fill: '#dddddd', align: 'center' });
+				text.anchor.setTo(0.5, 0.5);
+
+			}
+		}
 	}
 
 	createExplosion(x, y) {

@@ -36,6 +36,8 @@ export class Player {
 
 	powerUp: PowerUp;
 
+	isDead = false;
+
 	constructor(private globalCollisionGroup: Phaser.Group, public pad: Phaser.SinglePad, public playerNumber: number) {
 		this.lastShot = this.pad.game.time.totalElapsedSeconds();
 
