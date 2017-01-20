@@ -5,7 +5,9 @@ import { PieceMaker } from './assets/pieces';
 
 export default class GameState extends Phaser.State {
 
+	nextPiece: number;
 	x = 5;
+	rotation = 0;
 	cursor: Phaser.Sprite;
 
 	init() {
@@ -13,7 +15,7 @@ export default class GameState extends Phaser.State {
 	}
 
 	preload() {
-		
+
 		PieceMaker(Globals.AllPieceDefs, this.load);
 
 		this.physics.startSystem(Phaser.Physics.P2JS);
@@ -35,6 +37,7 @@ export default class GameState extends Phaser.State {
 		//Show where cursor is
 		this.cursor = this.add.sprite(this.x * Globals.GridPx, 100, 'cursor');
 
+		this.randomiseNext();
 
 		//input
 		this.input.gamepad.pad1.onDownCallback = (inputIndex: number) => {
@@ -45,25 +48,35 @@ export default class GameState extends Phaser.State {
 				this.x++;
 			} else if (inputIndex == Phaser.Gamepad.XBOX360_A) {
 				this.placeBlock();
+			} else if (inputIndex == Phaser.Gamepad.XBOX360_X) {
+				this.rotation++;
+			} else if (inputIndex == Phaser.Gamepad.XBOX360_B) {
+				this.rotation--;
 			}
+
 			this.cursor.x = this.x * Globals.GridPx;
+			this.rotation = this.rotation % 4;
+				console.log(this.rotation);
 		};
 	}
 
+	randomiseNext() {
+		this.nextPiece = Math.floor(Math.random() * Globals.AllPieceDefs.length);
+	}
 	create() { }
 
 	placeBlock() {
 		//Globals.AllPieceDefs[6].filename
 		let square = this.add.sprite(this.x * Globals.GridPx, 100, '');
-		Globals.AllPieceDefs[6].addPhysics(this.physics.p2, square);
+		Globals.AllPieceDefs[this.nextPiece].addPhysics(this.physics.p2, square);
+		square.angle = 90 * this.rotation;
+		(<Phaser.Physics.P2.Body>square.body).angle = square.angle;
 		//TODO square.scale.set(0.5);
+
+		this.randomiseNext();
 	}
 
 	update() {
 		//console.log(this.input.gamepad.supported, this.input.gamepad.active, this.input.gamepad.pad1.connected, this.input.gamepad.pad1.axis(Phaser.Gamepad.AXIS_0));
-		if (this.input.gamepad.pad1.isDown(Phaser.Gamepad.XBOX360_A)) {
-			console.log("just A");
-		}
-
 	}
 }
