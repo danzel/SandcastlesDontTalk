@@ -3,6 +3,7 @@ import * as WebFont from 'webfontloader';
 import * as Globals from './globals';
 import { Player } from './player';
 
+declare function require(url: string): string;
 
 
 export default class GameState extends Phaser.State {
@@ -26,13 +27,16 @@ export default class GameState extends Phaser.State {
 
 		this.collisionGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
 
+		this.load.image('1px', require('./assets/images/1px.png'));
+	}
+
+	create() {
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad1, 1));
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad2, 2));
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad3, 3));
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad4, 4));
-	}
 
-	create() { }
+	}
 
 	update() {
 		//console.log(this.input.gamepad.supported, this.input.gamepad.active, this.input.gamepad.pad1.connected, this.input.gamepad.pad1.axis(Phaser.Gamepad.AXIS_0));

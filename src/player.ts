@@ -43,7 +43,7 @@ export class Player {
 
 		pad.deadZone = 0;
 
-		this.sprite = pad.game.add.sprite(startPoses[playerNumber - 1][0], startPoses[playerNumber - 1][1], 'player');
+		this.sprite = pad.game.add.sprite(startPoses[playerNumber - 1][0], startPoses[playerNumber - 1][1], '1px');
 		(<any>this.sprite).player = this;//HACK
 		globalCollisionGroup.add(this.sprite);
 
