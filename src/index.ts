@@ -20,7 +20,7 @@ class SimpleGame {
 		this.game = new Phaser.Game(Globals.ScreenWidth, Globals.ScreenHeight, Phaser.AUTO, "content");
 		this.game.state.add('loading', LoadingState);
 		this.game.state.add('game', GameState);
-		this.game.state.start('game');
+		this.game.state.start('loading');
 	}
 }
 

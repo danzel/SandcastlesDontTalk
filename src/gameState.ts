@@ -77,13 +77,13 @@ export default class GameState extends Phaser.State {
 
 		[
 			[1, 0],
-			[0.75, 0.75],
+			[0.71, 0.71],
 			[0, 1],
 			[0, -1],
 			[-1, 0],
-			[-0.75, 0.75],
-			[0.75, -0.75],
-			[-0.75, 0.75]
+			[-0.71, 0.71],
+			[0.71, -0.71],
+			[-0.71, 0.71]
 		].forEach(dir => {
 			let shot = this.game.add.sprite(x + dir[0] * 20, y + dir[1] * 20);
 
