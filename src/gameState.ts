@@ -41,14 +41,16 @@ export default class GameState extends Phaser.State {
 
 		this.game.physics.arcade.collide(this.collisionGroup, undefined, (a, b, c) => {
 			if (a.player) {
-				let p = <Player>a;
+				let p = <Player>a.player;
 				//RIP
 				console.log('RIP');
+				p.sprite.destroy();
 			}
 			if (b.player) {
-				let p = <Player>b;
+				let p = <Player>b.player;
 				//RIP
 				console.log('RIP');
+				p.sprite.destroy();
 			}
 
 			if (a.shotBy && b.shotBy && a.shotBy != b.shotBy) {
@@ -62,20 +64,50 @@ export default class GameState extends Phaser.State {
 				aSprite.destroy();
 				bSprite.destroy();
 
-				
+				//make magic
+				this.createExplosion(midX, midY);
+
 			}
 		});
+	}
+
+	createExplosion(x, y) {
+
+		[
+			[1, 0],
+			[0.75, 0.75],
+			[0, 1],
+			[0, -1],
+			[-1, 0],
+			[-0.75, 0.75],
+			[0.75, -0.75],
+			[-0.75, 0.75]
+		].forEach(dir => {
+			let shot = this.game.add.sprite(x + dir[0] * 20, y + dir[1] * 20);
+
+			this.game.physics.arcade.enable(shot);
+			let shotBody = <Phaser.Physics.Arcade.Body>shot.body;
+			shotBody.setCircle(Globals.ShotRadius);
+			shotBody.collideWorldBounds = true;
+			shotBody.velocity.set(
+				dir[0] * Globals.ShotSpeed,
+				dir[1] * Globals.ShotSpeed
+			);
+			shotBody.bounce.set(1);
+
+			this.collisionGroup.add(shot);
+		})
 	}
 
 
 	render() {
 		if (Globals.DebugRender) {
 			this.players.forEach(p => {
-				this.game.debug.body(p.sprite);
+				this.game.debug.body(p.sprite, p.color);
 			});
 
 			this.collisionGroup.children.forEach(c => {
-				this.game.debug.body(<any>c);
+				this.game.debug.body(<any>c, (<any>c).color);
 			})
 		}
 	}

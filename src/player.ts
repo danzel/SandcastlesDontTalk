@@ -8,11 +8,19 @@ const startPoses = [
 	[100, Globals.ScreenHeight - 100]
 ]
 
+const colors = [
+	'#ff0000',
+	'#00ff00',
+	'#0000ff',
+	'#ffffff'
+];
+
 const playerRadius = 20;
 const speed = 300;
 
 export class Player {
 
+	color: any;
 	sprite: Phaser.Sprite;
 	body: Phaser.Physics.Arcade.Body;
 
@@ -28,6 +36,7 @@ export class Player {
 		this.body = <Phaser.Physics.Arcade.Body>this.sprite.body;
 		this.body.setCircle(playerRadius, 0, 0);
 		this.body.collideWorldBounds = true;
+		this.color = colors[playerNumber - 1]; //hack
 
 		pad.onDownCallback = (inputIndex: number) => {
 			//right bumper
@@ -49,8 +58,13 @@ export class Player {
 				);
 				shotBody.bounce.set(1);
 				(<any>shot).shotBy = this; //HACK
+				(<any>shot).color = this.color;//hack
 
 				globalCollisionGroup.add(shot);
+			}
+
+			if (inputIndex == 9) { //start
+				this.pad.game.state.start('game');
 			}
 		}
 	}
