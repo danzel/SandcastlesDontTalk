@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import * as WebFont from 'webfontloader';
 import * as Globals from './globals';
+import { PieceMaker } from './assets/pieces';
 
 export default class GameState extends Phaser.State {
 
@@ -12,6 +13,9 @@ export default class GameState extends Phaser.State {
 	}
 
 	preload() {
+		
+		PieceMaker(Globals.AllPieceDefs, this.load);
+
 		this.physics.startSystem(Phaser.Physics.P2JS);
 		this.physics.p2.gravity.y = 1000;
 
@@ -27,7 +31,6 @@ export default class GameState extends Phaser.State {
 		groundBody.clearShapes();
 		groundBody.addRectangle(Globals.ScreenWidth, 10);
 		groundBody.static = true;
-
 
 		//Show where cursor is
 		this.cursor = this.add.sprite(this.x * Globals.GridPx, 100, 'cursor');
@@ -50,11 +53,10 @@ export default class GameState extends Phaser.State {
 	create() { }
 
 	placeBlock() {
-		let square = this.add.sprite(this.x * Globals.GridPx, 100, 'square');
-		this.physics.p2.enable(square, Globals.DebugRender);
-		let squareBody = (<Phaser.Physics.P2.Body>square.body);
-		squareBody.clearShapes();
-		squareBody.addRectangle(50, 50);
+		//Globals.AllPieceDefs[6].filename
+		let square = this.add.sprite(this.x * Globals.GridPx, 100, '');
+		Globals.AllPieceDefs[6].addPhysics(this.physics.p2, square);
+		//TODO square.scale.set(0.5);
 	}
 
 	update() {
