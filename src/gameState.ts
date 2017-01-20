@@ -10,6 +10,8 @@ export default class GameState extends Phaser.State {
 	rotation = 0;
 	cursor: Phaser.Sprite;
 
+	nextPieceSprite: Phaser.Sprite;
+
 	init() {
 		//TODO
 	}
@@ -17,9 +19,12 @@ export default class GameState extends Phaser.State {
 	preload() {
 
 		PieceMaker(Globals.AllPieceDefs, this.load);
+		this.randomiseNext();
 
 		this.physics.startSystem(Phaser.Physics.P2JS);
 		this.physics.p2.gravity.y = 1000;
+		this.physics.p2.friction = 0.8;
+		//this.physics.p2.restitution;
 
 		this.input.gamepad.start();
 
@@ -34,10 +39,11 @@ export default class GameState extends Phaser.State {
 		groundBody.addRectangle(Globals.ScreenWidth, 10);
 		groundBody.static = true;
 
+
 		//Show where cursor is
 		this.cursor = this.add.sprite(this.x * Globals.GridPx, 100, 'cursor');
 
-		this.randomiseNext();
+		this.nextPieceSprite = this.add.sprite(100, 100, Globals.AllPieceDefs[this.nextPiece].filename);
 
 		//input
 		this.input.gamepad.pad1.onDownCallback = (inputIndex: number) => {
@@ -56,7 +62,8 @@ export default class GameState extends Phaser.State {
 
 			this.cursor.x = this.x * Globals.GridPx;
 			this.rotation = this.rotation % 4;
-				console.log(this.rotation);
+			this.nextPieceSprite.angle = 90 * this.rotation;
+			//console.log(this.rotation);
 		};
 	}
 
@@ -66,14 +73,16 @@ export default class GameState extends Phaser.State {
 	create() { }
 
 	placeBlock() {
-		//Globals.AllPieceDefs[6].filename
-		let square = this.add.sprite(this.x * Globals.GridPx, 100, '');
+		//let square = this.add.sprite(this.x * Globals.GridPx, 100, '');
+		let square = this.add.sprite(this.x * Globals.GridPx, 100, Globals.AllPieceDefs[this.nextPiece].filename);
 		Globals.AllPieceDefs[this.nextPiece].addPhysics(this.physics.p2, square);
 		square.angle = 90 * this.rotation;
 		(<Phaser.Physics.P2.Body>square.body).angle = square.angle;
-		//TODO square.scale.set(0.5);
+		square.scale.set(Globals.GridPx / 60);
 
 		this.randomiseNext();
+		this.nextPieceSprite.loadTexture(Globals.AllPieceDefs[this.nextPiece].filename);
+		
 	}
 
 	update() {

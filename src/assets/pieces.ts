@@ -95,10 +95,13 @@ export class PieceDef {
 			for (let x = 0; x < line.length; x++) {
 				if (line[x]) {
 					let rect = body.addRectangle(Globals.GridPx, Globals.GridPx, x * Globals.GridPx, y * Globals.GridPx);
+					//rect.
 				}
 			}
 		}
 		body.adjustCenterOfMass();
+
+		body.angularDamping = 0.8;
 	}
 }
 
