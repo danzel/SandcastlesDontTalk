@@ -23,12 +23,15 @@ export default class GameState extends Phaser.State {
 	explodeSound: Phaser.Sound;
 	scoreText: Array<Phaser.Text>;
 
+	timeGameEnded = 0;
+
 	init() {
 		this.defaultFrameRate = 0.016666666666666666;
 		//TODO
 	}
 
 	preload() {
+		this.timeGameEnded = 0;
 		this.shots.length = 0;
 		this.players.length = 0;
 		this.gameHasEnded = false;
@@ -169,8 +172,14 @@ export default class GameState extends Phaser.State {
 			} else if (amountAlive == 0) {
 				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
 				text.anchor.setTo(0.5, 0.5);
-
 			}
+
+			if (this.gameHasEnded) {
+				this.timeGameEnded = this.time.totalElapsedSeconds();
+			}
+		}
+		if (this.gameHasEnded && this.time.totalElapsedSeconds() - this.timeGameEnded > 2) {
+			this.state.start('game');
 		}
 
 
