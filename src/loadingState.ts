@@ -6,7 +6,6 @@ declare function require(url: string): string;
 
 export default class LoadingState extends Phaser.State {
 	init() {
-		//TODO?
 	}
 
 	preload() {
@@ -47,10 +46,9 @@ export default class LoadingState extends Phaser.State {
 	loaded = 0;
 	create() {
 		this.loaded++;
-		if (this.loaded == 2)
-			this.state.start('game');
-
-	}
-	private fontsLoaded() {
+		if (this.loaded == 2){
+			//this.state.start('game');
+			this.state.start('splashscreen');
+		}
 	}
 }

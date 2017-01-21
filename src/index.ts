@@ -6,9 +6,8 @@ import * as Globals from './globals';
 
 import GameState from './gameState';
 import LoadingState from './loadingState';
+import SplashScreenState from './splashScreenState';
 
-new GameState();
-new LoadingState();
 declare function require(filename: string): any;
 
 class SimpleGame {
@@ -19,6 +18,7 @@ class SimpleGame {
 	constructor() {
 		this.game = new Phaser.Game(Globals.ScreenWidth, Globals.ScreenHeight, Phaser.AUTO, "content");
 		this.game.state.add('loading', LoadingState);
+		this.game.state.add('splashscreen', SplashScreenState);
 		this.game.state.add('game', GameState);
 		this.game.state.start('loading');
 	}
