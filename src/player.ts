@@ -50,7 +50,7 @@ export class Player {
 		let startPos = ((powerUp == PowerUp.RealBulletHell) ? bulletHellStartPoses : startPoses);
 		this.sprite = pad.game.add.sprite(startPos[playerNumber - 1][0], startPos[playerNumber - 1][1], '1px');
 
-		this.pad.game.physics.p2.enable(this.sprite, Globals.DebugRender);
+		this.pad.game.physics.p2.enable(this.sprite);
 		this.body = <Phaser.Physics.P2.Body>this.sprite.body;
 		(<any>this.body.data).player = this;//HACK
 		this.body.clearShapes();
