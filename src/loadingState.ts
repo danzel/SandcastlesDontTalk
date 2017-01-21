@@ -9,6 +9,8 @@ export default class LoadingState extends Phaser.State {
 	}
 
 	preload() {
+		this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
 		WebFont.load({
 			google: {
 				families: [Globals.FontName]
