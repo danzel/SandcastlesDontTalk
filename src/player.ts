@@ -38,7 +38,7 @@ export class Player {
 
 	shootSound: Phaser.Sound;
 
-	constructor(private globalCollisionGroup: Phaser.Group, public pad: Phaser.SinglePad, public playerNumber: number, powerUp: PowerUp) {
+	constructor(private shots: Array<Phaser.Sprite>, public pad: Phaser.SinglePad, public playerNumber: number, powerUp: PowerUp) {
 		this.lastShot = this.pad.game.time.totalElapsedSeconds();
 
 		this.powerUp = powerUp;
@@ -49,7 +49,6 @@ export class Player {
 
 		let startPos = ((powerUp == PowerUp.RealBulletHell) ? bulletHellStartPoses : startPoses);
 		this.sprite = pad.game.add.sprite(startPos[playerNumber - 1][0], startPos[playerNumber - 1][1], '1px');
-		globalCollisionGroup.add(this.sprite);
 
 		this.pad.game.physics.p2.enable(this.sprite, Globals.DebugRender);
 		this.body = <Phaser.Physics.P2.Body>this.sprite.body;
@@ -68,6 +67,10 @@ export class Player {
 			if (inputIndex == 9) { //start
 				this.pad.game.state.start('game');
 			}
+		}
+
+		if (powerUp == PowerUp.Wrap) {
+			this.body.collideWorldBounds = false;
 		}
 
 		
@@ -148,7 +151,9 @@ export class Player {
 		let shotBody = <Phaser.Physics.P2.Body>shot.body;
 		shotBody.setCircle(Globals.ShotRadius);
 		shotBody.angle = Math.random() * 360;
-		shotBody.collideWorldBounds = true;
+		if (this.powerUp == PowerUp.Wrap) {
+			shotBody.collideWorldBounds = false;
+		}
 
 		let shotSpeed = Globals.ShotSpeed;
 		if (this.powerUp == PowerUp.Speedy) {
@@ -163,7 +168,6 @@ export class Player {
 		(<any>shotBody.data).color = this.color;
 		(<any>shot).isInInitialSlowArea = true;
 
-		this.globalCollisionGroup.add(shot);
-
+		this.shots.push(shot);
 	}
 }

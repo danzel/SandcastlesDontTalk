@@ -1,5 +1,6 @@
 export enum PowerUp {
 	//None,
+	Wrap,
 	SuperHot,
 	SuperHotSpreadShot,
 	Walls,
