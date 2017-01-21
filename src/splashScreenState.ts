@@ -21,6 +21,9 @@ export default class LoadingState extends Phaser.State {
 	update() {
 		this.padsText.text = this.input.gamepad.padsConnected + ' Pads Connected';
 
+		if (!this.input.gamepad.enabled || !this.input.gamepad.active) {
+			this.padsText.text += '. Press a button to enable maybe'
+		}
 		this.startToPlay.visible = (this.input.gamepad.padsConnected >= 2);
 
 

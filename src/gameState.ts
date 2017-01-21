@@ -6,6 +6,7 @@ import { PowerUp } from './powerUp';
 
 
 
+let wonLast = -1;
 let globalScore = [
 	0, 0, 0, 0
 ];
@@ -78,6 +79,10 @@ export default class GameState extends Phaser.State {
 		this.players.push(new Player(this.shots, this.input.gamepad.pad3, 3, this.powerUp));
 		this.players.push(new Player(this.shots, this.input.gamepad.pad4, 4, this.powerUp));
 
+		if (wonLast >= 0) {
+			this.players[wonLast].addCrown();
+		}
+
 		this.explodeSound = this.game.add.sound('explode');
 
 		this.physics.p2.onBeginContact.add((a, b) => {
@@ -117,7 +122,7 @@ export default class GameState extends Phaser.State {
 		if (this.powerUp == PowerUp.Walls) {
 			this.addWalls();
 
-			this.add.sprite(0,0, 'walls').sendToBack();
+			this.add.sprite(0, 0, 'walls').sendToBack();
 		}
 
 		bg.sendToBack();
@@ -144,9 +149,13 @@ export default class GameState extends Phaser.State {
 				globalScore[alive[0].playerNumber - 1]++;
 				this.scoreText[alive[0].playerNumber - 1].text = '' + globalScore[alive[0].playerNumber - 1];
 
+				wonLast = alive[0].playerNumber - 1;
+				alive[0].addCrown();
+
 			} else if (amountAlive == 0) {
 				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
 				text.anchor.setTo(0.5, 0.5);
+				wonLast = -1;
 			}
 
 			if (this.gameHasEnded) {

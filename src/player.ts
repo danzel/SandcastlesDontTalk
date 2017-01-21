@@ -89,7 +89,12 @@ export class Player {
 		this.realSprite.anchor.set(0.5, 0.59);
 		this.realSprite.scale.set(0.2);
 		this.sprite.addChild(this.realSprite);
-		
+	}
+
+	addCrown() {
+		let crown = this.pad.game.add.sprite(0, -40, 'crown');
+		crown.anchor.set(0.5, 1);
+		this.sprite.addChild(crown);
 	}
 
 	update() {
