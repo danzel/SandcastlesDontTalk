@@ -8,7 +8,7 @@ import { PowerUp } from './powerUp';
 declare function require(url: string): string;
 
 let globalScore = [
-	10, 10, 10, 10
+	0, 0, 0, 0
 ];
 
 
@@ -111,6 +111,8 @@ export default class GameState extends Phaser.State {
 				let midX = (aSprite.x + bSprite.x) / 2;
 				let midY = (aSprite.y + bSprite.y) / 2;
 
+				a.shotBy = null;
+				b.shotBy = null;
 				aSprite.destroy();
 				bSprite.destroy();
 
@@ -174,7 +176,6 @@ export default class GameState extends Phaser.State {
 			})
 
 			if (!p.pad.connected) {
-				console.log('killing it')
 				p.isDead = true;
 				p.sprite.destroy();
 
