@@ -5,7 +5,6 @@ import { Player } from './player';
 import { PowerUp } from './powerUp';
 
 
-declare function require(url: string): string;
 
 let globalScore = [
 	0, 0, 0, 0
@@ -43,30 +42,6 @@ export default class GameState extends Phaser.State {
 		this.physics.p2.restitution = 1;
 		this.physics.p2.friction = 0;
 		this.physics.p2.setImpactEvents(true);
-		//this.physics.p2.damp
-
-		this.input.gamepad.start();
-
-		this.load.image('1px', require('./assets/images/1px.png'));
-
-		this.load.image('player_1', require('./assets/images/space/RedSpaceship.png'));
-		this.load.image('player_2', require('./assets/images/space/GreenSpaceship.png'));
-		this.load.image('player_3', require('./assets/images/space/BlueSpaceship.png'));
-		this.load.image('player_4', require('./assets/images/space/YellowSpaceship.png'));
-
-		this.load.image('shot_1', require('./assets/images/shots/RedAmmo.png'));
-		this.load.image('shot_2', require('./assets/images/shots/GreenAmmo.png'));
-		this.load.image('shot_3', require('./assets/images/shots/BlueAmmo.png'));
-		this.load.image('shot_4', require('./assets/images/shots/YellowAmmo.png'));
-		this.load.image('shot_0', require('./assets/images/shots/Shrapnel.png'));
-
-		this.load.image('bg', require('./assets/images/Background.png'));
-		this.load.image('walls', require('./assets/images/Walls.png'));
-
-		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
-		this.load.audio('explode', require('./assets/sounds/explode.m4a'));
-		this.game.sound.setDecodedCallback(['shoot', 'explode'], () => { }, this);
-
 	}
 
 
