@@ -1,5 +1,5 @@
 import * as Globals from './globals';
-
+import { PowerUp } from './powerUp';
 
 const startPoses = [
 	[100, 100],
@@ -15,16 +15,6 @@ const colors = [
 	'#ffffff'
 ];
 
-enum PowerUp {
-	//None,
-	Speedy,
-	MachineGun,
-	SpreadShot,
-
-
-	Count
-}
-
 
 export class Player {
 
@@ -38,10 +28,10 @@ export class Player {
 
 	isDead = false;
 
-	constructor(private globalCollisionGroup: Phaser.Group, public pad: Phaser.SinglePad, public playerNumber: number) {
+	constructor(private globalCollisionGroup: Phaser.Group, public pad: Phaser.SinglePad, public playerNumber: number, powerUp: PowerUp) {
 		this.lastShot = this.pad.game.time.totalElapsedSeconds();
 
-		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
+		this.powerUp = powerUp;
 
 		pad.deadZone = 0;
 

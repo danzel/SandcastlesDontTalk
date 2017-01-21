@@ -2,6 +2,8 @@ import * as Phaser from 'phaser';
 import * as WebFont from 'webfontloader';
 import * as Globals from './globals';
 import { Player } from './player';
+import { PowerUp } from './powerUp';
+
 
 declare function require(url: string): string;
 
@@ -18,6 +20,7 @@ export default class GameState extends Phaser.State {
 	collisionGroup: Phaser.Group;
 
 	gameHasEnded = false;
+	powerUp: PowerUp;
 
 	init() {
 		//TODO
@@ -26,6 +29,7 @@ export default class GameState extends Phaser.State {
 	preload() {
 		this.players.length = 0;
 		this.gameHasEnded = false;
+		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
 
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -47,10 +51,21 @@ export default class GameState extends Phaser.State {
 		this.add.text(Globals.ScreenWidth - xRight, Globals.ScreenHeight - yBot, '' + globalScore[2], { font: '100px Arial', fill: '#ffffff' });
 		this.add.text(10, Globals.ScreenHeight - yBot, '' + globalScore[3], { font: '100px Arial', fill: '#ffffff' });
 
-		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad1, 1));
-		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad2, 2));
-		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad3, 3));
-		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad4, 4));
+		let pt = this.add.text(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2, PowerUp[this.powerUp], {
+			font: '100px Arial', fill: '#ffffff'
+		});
+		pt.anchor.set(0.5);
+		let tween = this.game.add.tween(pt);
+		tween.to({}, 1000)
+			.chain(this.game.add.tween(pt)
+				.to({ alpha: 0 }, 1000)
+			)
+			.start();
+
+		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad1, 1, this.powerUp));
+		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad2, 2, this.powerUp));
+		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad3, 3, this.powerUp));
+		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad4, 4, this.powerUp));
 
 	}
 
@@ -113,7 +128,7 @@ export default class GameState extends Phaser.State {
 		this.players.forEach(p => {
 			if (p.isDead)
 				return;
-				
+
 			this.collisionGroup.children.forEach(c => {
 				let a = <any>c;
 				if (!(a).player) { //A shot (?)
