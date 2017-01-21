@@ -59,6 +59,8 @@ export default class GameState extends Phaser.State {
 		this.load.image('shot_4', require('./assets/images/shots/YellowAmmo.png'));
 		this.load.image('shot_0', require('./assets/images/shots/Shrapnel.png'));
 
+		this.load.image('bg', require('./assets/images/Background.png'));
+
 		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
 		this.load.audio('explode', require('./assets/sounds/explode.m4a'));
 		this.game.sound.setDecodedCallback(['shoot', 'explode'], () => { }, this);
@@ -68,6 +70,7 @@ export default class GameState extends Phaser.State {
 
 	defaultFrameRate: number;
 	create() {
+		let bg = this.add.sprite(0, 0, 'bg');
 		let xRight = 20;
 		let yBot = 130;
 
@@ -135,6 +138,9 @@ export default class GameState extends Phaser.State {
 		if (this.powerUp == PowerUp.Walls) {
 			this.addWalls();
 		}
+
+		bg.sendToBack();
+		
 	}
 
 	update() {
