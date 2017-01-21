@@ -23,6 +23,9 @@ export default class LoadingState extends Phaser.State {
 
 		this.load.image('1px', require('./assets/images/1px.png'));
 
+		this.load.image('particle_1', require('./assets/images/particles/1.png'));
+
+
 		this.load.image('player_1', require('./assets/images/space/RedSpaceship.png'));
 		this.load.image('player_2', require('./assets/images/space/GreenSpaceship.png'));
 		this.load.image('player_3', require('./assets/images/space/BlueSpaceship.png'));

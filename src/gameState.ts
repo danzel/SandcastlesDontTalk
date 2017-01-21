@@ -24,6 +24,8 @@ export default class GameState extends Phaser.State {
 	explodeSound: Phaser.Sound;
 	scoreText: Array<Phaser.Text>;
 
+	sparkEmitter: Phaser.Particles.Arcade.Emitter;
+
 	timeGameEnded = 0;
 
 	init() {
@@ -55,6 +57,15 @@ export default class GameState extends Phaser.State {
 		let bg = this.add.sprite(0, 0, 'bg');
 		let xRight = 20;
 		let yBot = 130;
+
+		this.sparkEmitter = this.game.add.emitter(0,0, 1000);
+		(<any>this.sparkEmitter).blendMode = PIXI.blendModes.ADD;
+		this.sparkEmitter.setAlpha(1, 0, 2000, Phaser.Easing.Cubic.In);
+		this.sparkEmitter.setRotation(0, 360);
+		this.sparkEmitter.setXSpeed(-100, 100);
+		this.sparkEmitter.setYSpeed(-100, 100);
+
+		this.sparkEmitter.makeParticles('particle_1'); //TODO: REAL PARTICLE GFX
 
 
 		this.scoreText = [
@@ -89,7 +100,7 @@ export default class GameState extends Phaser.State {
 
 		this.explodeSound = this.game.add.sound('explode');
 
-		this.physics.p2.onBeginContact.add((a, b) => {
+		this.physics.p2.onBeginContact.add((a, b,c,d,e) => {
 
 			if (a.player && !a.player.isDead) {
 				let p = <Player>a.player;
@@ -119,7 +130,13 @@ export default class GameState extends Phaser.State {
 
 				//make magic
 				this.createExplosion(midX, midY, 8);
+			}
 
+			if (this.shots.indexOf(a.sprite) >= 0 || this.shots.indexOf(b.sprite) >= 0) {
+				let sprite = a.sprite || b.sprite;
+				this.sparkEmitter.x = sprite.x;
+				this.sparkEmitter.y = sprite.y;
+				this.sparkEmitter.start(true, 2000, null, 5);
 			}
 		});
 
@@ -308,6 +325,10 @@ export default class GameState extends Phaser.State {
 		directions.forEach(dir => {
 			this.createShot(x + dir.x * 20, y + dir.y * 20, dir);
 		})
+
+		this.sparkEmitter.x = x;
+		this.sparkEmitter.y = y;
+		this.sparkEmitter.start(true, 2000, null, 40);
 	}
 
 	createShot(x, y, dir) {
