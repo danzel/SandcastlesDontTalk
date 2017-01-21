@@ -139,13 +139,15 @@ export class Player {
 	fireShot(thing: Phaser.Point) {
 		let x = this.sprite.x + Globals.PlayerRadius - Globals.ShotRadius + thing.x * (Globals.PlayerRadius + Globals.ShotAwayDist);
 		let y = this.sprite.y + Globals.PlayerRadius - Globals.ShotRadius + thing.y * (Globals.PlayerRadius + Globals.ShotAwayDist);
-		let shot = this.pad.game.add.graphics(x, y);
-		shot.beginFill(this.color, 0.7);
-		shot.drawCircle(0, 0, Globals.ShotRadius * 2);
+		let shot = this.pad.game.add.sprite(x, y, 'shot_' + this.playerNumber);
+		shot.scale.set(3 * Globals.ShotRadius / 136);
+		//shot.beginFill(this.color, 0.7);
+		//shot.drawCircle(0, 0, Globals.ShotRadius * 2);
 
 		this.pad.game.physics.p2.enable(shot);
 		let shotBody = <Phaser.Physics.P2.Body>shot.body;
 		shotBody.setCircle(Globals.ShotRadius);
+		shotBody.angle = Math.random() * 360;
 		shotBody.collideWorldBounds = true;
 
 		let shotSpeed = Globals.ShotSpeed;

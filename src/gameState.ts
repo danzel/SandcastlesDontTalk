@@ -52,6 +52,12 @@ export default class GameState extends Phaser.State {
 		this.load.image('player_3', require('./assets/images/space/BlueSpaceship.png'));
 		this.load.image('player_4', require('./assets/images/space/YellowSpaceship.png'));
 
+		this.load.image('shot_1', require('./assets/images/shots/RedAmmo.png'));
+		this.load.image('shot_2', require('./assets/images/shots/GreenAmmo.png'));
+		this.load.image('shot_3', require('./assets/images/shots/BlueAmmo.png'));
+		this.load.image('shot_4', require('./assets/images/shots/YellowAmmo.png'));
+		this.load.image('shot_0', require('./assets/images/shots/Shrapnel.png'));
+
 		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
 		this.load.audio('explode', require('./assets/sounds/explode.m4a'));
 		this.game.sound.setDecodedCallback(['shoot', 'explode'], () => { }, this);
@@ -271,7 +277,9 @@ export default class GameState extends Phaser.State {
 	createShot(x, y, dir) {
 		//TODO move player code here? and then just have one
 
-		let shot = this.game.add.graphics(x, y);
+		let shot = this.game.add.sprite(x, y, 'shot_0');
+		shot.scale.set(3 * Globals.ShotRadius / 136);
+		
 		this.game.physics.p2.enable(shot);
 		let shotBody = <Phaser.Physics.P2.Body>shot.body;
 		shotBody.setCircle(Globals.ShotRadius);
@@ -280,10 +288,8 @@ export default class GameState extends Phaser.State {
 		shotBody.moveDown(dir.y * Globals.ShotSpeed);
 		shotBody.damping = 0;
 
+		shotBody.angle = Math.random() * 360;
 		this.collisionGroup.add(shot);
-
-		shot.beginFill(0x999999, 1);
-		shot.drawCircle(0, 0, Globals.ShotRadius * 2);
 	}
 
 
