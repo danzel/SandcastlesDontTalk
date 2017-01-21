@@ -30,7 +30,9 @@ export default class GameState extends Phaser.State {
 	preload() {
 		this.players.length = 0;
 		this.gameHasEnded = false;
-		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
+		this.powerUp = 0;//Math.floor(Math.random() * PowerUp.Count);
+
+		this.lastBulletHellShot = this.game.time.totalElapsedSeconds();
 
 		this.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -173,7 +175,32 @@ export default class GameState extends Phaser.State {
 				body.velocity.multiply(0.99, 0.99);
 			}
 		});
+
+
+		if (this.powerUp == PowerUp.RealBulletHell) {
+			let timeSince = this.game.time.totalElapsedSeconds() - this.lastBulletHellShot;
+
+			if (timeSince >= 0.2) {
+				this.lastBulletHellShot = this.game.time.totalElapsedSeconds();
+				//this.shot
+
+				if (!this.bulletHellDir) {
+					this.bulletHellDir = new Phaser.Point(1, 0);
+					this.bulletHellDir = this.bulletHellDir.rotate(0, 0, Math.random() * 360, true);
+				}
+
+				this.createShot(10, 10, this.bulletHellDir);
+				this.createShot(Globals.ScreenWidth - 10, 10, this.bulletHellDir);
+				this.createShot(Globals.ScreenWidth - 10, Globals.ScreenHeight - 10, this.bulletHellDir);
+				this.createShot(10, Globals.ScreenHeight - 10, this.bulletHellDir);
+
+				this.bulletHellDir = this.bulletHellDir.rotate(0, 0, 10 + Math.random() * 2, true);
+			}
+		}
 	}
+
+	lastBulletHellShot: number;
+	bulletHellDir: Phaser.Point;
 
 	killPlayer(p: Player) {
 		this.explodeSound.play();
@@ -195,8 +222,12 @@ export default class GameState extends Phaser.State {
 		}
 
 		directions.forEach(dir => {
-			let shot = this.game.add.sprite(x + dir.x * 20, y + dir.y * 20);
+			this.createShot(x + dir.x * 20, y + dir.y * 20, dir);
+		})
+	}
 
+	createShot(x, y, dir) {
+			let shot = this.game.add.sprite(x, y);
 			this.game.physics.arcade.enable(shot);
 			let shotBody = <Phaser.Physics.Arcade.Body>shot.body;
 			shotBody.setCircle(Globals.ShotRadius);
@@ -208,7 +239,6 @@ export default class GameState extends Phaser.State {
 			shotBody.bounce.set(1);
 
 			this.collisionGroup.add(shot);
-		})
 	}
 
 

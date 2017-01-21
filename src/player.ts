@@ -8,6 +8,13 @@ const startPoses = [
 	[100, Globals.ScreenHeight - 100]
 ]
 
+const bulletHellStartPoses = [
+	[Globals.ScreenWidth / 2 - 100, Globals.ScreenHeight / 2 - 100],
+	[Globals.ScreenWidth / 2 + 100, Globals.ScreenHeight / 2 - 100],
+	[Globals.ScreenWidth / 2 + 100, Globals.ScreenHeight / 2 + 100],
+	[Globals.ScreenWidth / 2 - 100, Globals.ScreenHeight / 2 + 100],
+]
+
 const colors = [
 	'#ff0000',
 	'#00ff00',
@@ -39,7 +46,8 @@ export class Player {
 
 		this.shootSound = pad.game.add.audio('shoot');
 
-		this.sprite = pad.game.add.sprite(startPoses[playerNumber - 1][0], startPoses[playerNumber - 1][1], '1px');
+		let startPos = ((powerUp == PowerUp.RealBulletHell) ? bulletHellStartPoses : startPoses);
+		this.sprite = pad.game.add.sprite(startPos[playerNumber - 1][0], startPos[playerNumber - 1][1], '1px');
 		(<any>this.sprite).player = this;//HACK
 		globalCollisionGroup.add(this.sprite);
 
@@ -104,19 +112,22 @@ export class Player {
 
 			this.fireShot(thing);
 			if (this.powerUp == PowerUp.SpreadShot) {
-			thing = thing.rotate(0, 0, spreadAmount, true);
-			this.fireShot(thing);
-			thing = thing.rotate(0, 0, -2 * spreadAmount, true);
-			this.fireShot(thing);
-			thing = thing.rotate(0, 0, 3 * spreadAmount, true);
-			this.fireShot(thing);
-			thing = thing.rotate(0, 0, -4 * spreadAmount, true);
-			this.fireShot(thing);
+				thing = thing.rotate(0, 0, spreadAmount, true);
+				this.fireShot(thing);
+				thing = thing.rotate(0, 0, -2 * spreadAmount, true);
+				this.fireShot(thing);
+				thing = thing.rotate(0, 0, 3 * spreadAmount, true);
+				this.fireShot(thing);
+				thing = thing.rotate(0, 0, -4 * spreadAmount, true);
+				this.fireShot(thing);
 			}
 		}
 	}
 
 	fireShot(thing: Phaser.Point) {
+
+		if (this.powerUp == PowerUp.RealBulletHell)
+			return;
 
 		let shot = this.pad.game.add.sprite(
 			this.sprite.x + Globals.PlayerRadius - Globals.ShotRadius + thing.x * (Globals.PlayerRadius + Globals.ShotAwayDist),
