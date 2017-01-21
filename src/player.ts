@@ -27,7 +27,7 @@ export class Player {
 
 	color: any;
 	sprite: Phaser.Sprite;
-	body: Phaser.Physics.Arcade.Body;
+	body: Phaser.Physics.P2.Body;
 
 	lastShot: number;
 
@@ -48,12 +48,14 @@ export class Player {
 
 		let startPos = ((powerUp == PowerUp.RealBulletHell) ? bulletHellStartPoses : startPoses);
 		this.sprite = pad.game.add.sprite(startPos[playerNumber - 1][0], startPos[playerNumber - 1][1], '1px');
-		(<any>this.sprite).player = this;//HACK
 		globalCollisionGroup.add(this.sprite);
 
-		this.pad.game.physics.arcade.enable(this.sprite);
-		this.body = <Phaser.Physics.Arcade.Body>this.sprite.body;
-		this.body.setCircle(Globals.PlayerRadius, 0, 0);
+		this.pad.game.physics.p2.enable(this.sprite, Globals.DebugRender);
+		this.body = <Phaser.Physics.P2.Body>this.sprite.body;
+		(<any>this.body.data).player = this;//HACK
+		this.body.clearShapes();
+		this.body.addCircle(Globals.PlayerRadius);
+		//this.body.setCircle(Globals.PlayerRadius, 0, 0);
 		this.body.collideWorldBounds = true;
 		this.color = colors[playerNumber - 1]; //hack
 
@@ -86,7 +88,9 @@ export class Player {
 		let speed = Globals.PlayerSpeed;
 		if (this.powerUp == PowerUp.Speedy)
 			speed *= 1.6;
-		this.body.velocity.set(this.pad.axis(0) * speed, this.pad.axis(1) * speed)
+		this.body.setZeroVelocity();
+		this.body.moveRight(this.pad.axis(0) * speed);
+		this.body.moveDown(this.pad.axis(1) * speed);
 
 		let timeSinceLast = this.pad.game.time.totalElapsedSeconds() - this.lastShot;
 		var thing = new Phaser.Point(this.pad.axis(2), this.pad.axis(3));
@@ -129,8 +133,8 @@ export class Player {
 			this.sprite.x + Globals.PlayerRadius - Globals.ShotRadius + thing.x * (Globals.PlayerRadius + Globals.ShotAwayDist),
 			this.sprite.y + Globals.PlayerRadius - Globals.ShotRadius + thing.y * (Globals.PlayerRadius + Globals.ShotAwayDist));
 
-		this.pad.game.physics.arcade.enable(shot);
-		let shotBody = <Phaser.Physics.Arcade.Body>shot.body;
+		this.pad.game.physics.p2.enable(shot, Globals.DebugRender);
+		let shotBody = <Phaser.Physics.P2.Body>shot.body;
 		shotBody.setCircle(Globals.ShotRadius);
 		shotBody.collideWorldBounds = true;
 
@@ -138,14 +142,14 @@ export class Player {
 		if (this.powerUp == PowerUp.Speedy) {
 			shotSpeed *= 2;
 		}
-		shotBody.velocity.set(
-			thing.x * shotSpeed,
-			thing.y * shotSpeed
-		);
-		shotBody.bounce.set(1);
-		(<any>shot).shotBy = this; //HACK
-		(<any>shot).color = this.color;//hack
-		(<any>shot).isInInitialSlowArea = true;//hack
+		shotBody.moveRight(thing.x * shotSpeed);
+		shotBody.moveDown(thing.y * shotSpeed);
+		shotBody.damping = 0;
+		//TODO shotBody.bounce.set(1);
+		(<any>shotBody.data).sprite = shot;
+		(<any>shotBody.data).shotBy = this;
+		(<any>shotBody.data).color = this.color;
+		(<any>shot).isInInitialSlowArea = true;
 
 		this.globalCollisionGroup.add(shot);
 

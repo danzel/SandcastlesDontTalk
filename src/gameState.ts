@@ -30,15 +30,19 @@ export default class GameState extends Phaser.State {
 	preload() {
 		this.players.length = 0;
 		this.gameHasEnded = false;
-		this.powerUp = 0;//Math.floor(Math.random() * PowerUp.Count);
+		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
 
 		this.lastBulletHellShot = this.game.time.totalElapsedSeconds();
 
-		this.physics.startSystem(Phaser.Physics.ARCADE);
+		this.physics.startSystem(Phaser.Physics.P2JS);
+		this.physics.p2.restitution = 1;
+		this.physics.p2.friction = 0;
+		this.physics.p2.setImpactEvents(true);
+		//this.physics.p2.damp
 
 		this.input.gamepad.start();
 
-		this.collisionGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
+		this.collisionGroup = this.game.add.physicsGroup(Phaser.Physics.P2JS);
 
 		this.load.image('1px', require('./assets/images/1px.png'));
 
@@ -76,27 +80,24 @@ export default class GameState extends Phaser.State {
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad4, 4, this.powerUp));
 
 		this.explodeSound = this.game.add.sound('explode');
-	}
 
-	update() {
-		//console.log(this.input.gamepad.supported, this.input.gamepad.active, this.input.gamepad.pad1.connected, this.input.gamepad.pad1.axis(Phaser.Gamepad.AXIS_0));
+		this.physics.p2.onBeginContact.add((a, b) => {
 
-		this.players.forEach(p => p.update());
-
-		this.game.physics.arcade.collide(this.collisionGroup, undefined, (a, b, c) => {
-			if (a.player) {
+			if (a.player && !a.player.isDead) {
 				let p = <Player>a.player;
 				this.killPlayer(p);
+				console.log('rip')
 			}
-			if (b.player) {
+			if (b.player && !b.player.isDead) {
 				let p = <Player>b.player;
 				this.killPlayer(p);
+				console.log('rip')
 			}
 
 			if (a.shotBy && b.shotBy && a.shotBy != b.shotBy) {
 				console.log('collideshot');
-				let aSprite = <Phaser.Sprite>a;
-				let bSprite = <Phaser.Sprite>b;
+				let aSprite = <Phaser.Sprite>a.sprite;
+				let bSprite = <Phaser.Sprite>b.sprite;
 
 				let midX = (aSprite.x + bSprite.x) / 2;
 				let midY = (aSprite.y + bSprite.y) / 2;
@@ -109,6 +110,19 @@ export default class GameState extends Phaser.State {
 
 			}
 		});
+
+		let wall = this.game.add.sprite(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2, '1px');
+		this.game.physics.p2.enable(wall, Globals.DebugRender);
+		let wallBody = <Phaser.Physics.P2.Body>wall.body;
+		wallBody.clearShapes();
+		wallBody.addRectangle(50, 500);
+		wallBody.static = true;
+	}
+
+	update() {
+		//console.log(this.input.gamepad.supported, this.input.gamepad.active, this.input.gamepad.pad1.connected, this.input.gamepad.pad1.axis(Phaser.Gamepad.AXIS_0));
+
+		this.players.forEach(p => p.update());
 
 		if (!this.gameHasEnded) {
 			let alive = this.players.filter(p => !p.isDead);
@@ -137,14 +151,14 @@ export default class GameState extends Phaser.State {
 		this.players.forEach(p => {
 			if (p.isDead)
 				return;
-
+			let pPos = new Phaser.Point(p.body.x, p.body.y);
 			this.collisionGroup.children.forEach(c => {
 				let a = <any>c;
 				if (!(a).player) { //A shot (?)
 					//TODO: Distance
-					let body = <Phaser.Physics.Arcade.Body>a.body;
+					let body = <Phaser.Physics.P2.Body>a.body;
 
-					let dist = body.position.distance(p.body.position);
+					let dist = new Phaser.Point(body.x, body.y).distance(pPos);
 
 					if (dist < Globals.SlowDownRange) {
 						a.shouldBeSlowNow = true;
@@ -155,24 +169,24 @@ export default class GameState extends Phaser.State {
 
 		this.collisionGroup.children.forEach(c => {
 			let a = <any>c;
-			let body = <Phaser.Physics.Arcade.Body>a.body;
+			let body = <Phaser.Physics.P2.Body>a.body;
 
 			if (a.isInInitialSlowArea) {
 				if (!a.shouldBeSlowNow)
 					a.isInInitialSlowArea = false;
 			} else {
 				if (!a.shouldBeSlowNow && a.isSlowNow) {
-					body.velocity.multiply(4, 4);
+					this.hackVelocityMultiplier(body, 4);
 					a.isSlowNow = false;
 				}
 				if (a.shouldBeSlowNow && !a.isSlowNow) {
-					body.velocity.multiply(0.25, 0.25);
+					this.hackVelocityMultiplier(body, 0.25);
 					a.isSlowNow = true;
 				}
 			}
-			
+
 			if (this.powerUp == PowerUp.BulletsSlowDown && !(<any>a).player) {
-				body.velocity.multiply(0.99, 0.99);
+				this.hackVelocityMultiplier(body, 0.99);
 			}
 		});
 
@@ -211,6 +225,14 @@ export default class GameState extends Phaser.State {
 		this.game.camera.shake(0.02, 200);
 	}
 
+	hackVelocityMultiplier(body: Phaser.Physics.P2.Body, amount: number) {
+		let x = body.velocity.x;
+		let y = body.velocity.y;
+		body.setZeroVelocity();
+		body.moveRight(x * amount);
+		body.moveDown(y * amount);
+	}
+
 	createExplosion(x, y, explosionSize) {
 
 		let directions = new Array<Phaser.Point>();
@@ -227,18 +249,18 @@ export default class GameState extends Phaser.State {
 	}
 
 	createShot(x, y, dir) {
-			let shot = this.game.add.sprite(x, y);
-			this.game.physics.arcade.enable(shot);
-			let shotBody = <Phaser.Physics.Arcade.Body>shot.body;
-			shotBody.setCircle(Globals.ShotRadius);
-			shotBody.collideWorldBounds = true;
-			shotBody.velocity.set(
-				dir.x * Globals.ShotSpeed,
-				dir.y * Globals.ShotSpeed
-			);
-			shotBody.bounce.set(1);
+		//TODO move player code here? and then just have one
+		
+		let shot = this.game.add.sprite(x, y);
+		this.game.physics.p2.enable(shot, Globals.DebugRender);
+		let shotBody = <Phaser.Physics.P2.Body>shot.body;
+		shotBody.setCircle(Globals.ShotRadius);
+		shotBody.collideWorldBounds = true;
+		shotBody.moveRight(dir.x * Globals.ShotSpeed);
+		shotBody.moveDown(dir.y * Globals.ShotSpeed);
+		shotBody.damping = 0;
 
-			this.collisionGroup.add(shot);
+		this.collisionGroup.add(shot);
 	}
 
 
