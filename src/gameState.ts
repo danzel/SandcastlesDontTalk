@@ -246,7 +246,7 @@ export default class GameState extends Phaser.State {
 			}
 		}
 
-		if (this.powerUp == PowerUp.SuperHot) {
+		if (this.powerUp == PowerUp.SuperHot || this.powerUp == PowerUp.SuperHotSpreadShot) {
 			let alivePlayers = this.players.filter(p => !p.isDead);
 			if (alivePlayers.length > 0) {
 				let scaler = 0;

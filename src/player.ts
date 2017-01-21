@@ -110,7 +110,7 @@ export class Player {
 
 			//thing = thing.rotate(0, 0, 20 * Math.random() - 10, true);
 		}
-		if (this.powerUp == PowerUp.SpreadShot) {
+		if (this.powerUp == PowerUp.SpreadShot || this.powerUp == PowerUp.SuperHotSpreadShot) {
 			timeBetweenShots *= 2;
 		}
 
@@ -122,7 +122,7 @@ export class Player {
 			this.shootSound.play();
 
 			this.fireShot(thing);
-			if (this.powerUp == PowerUp.SpreadShot) {
+			if (this.powerUp == PowerUp.SpreadShot || this.powerUp == PowerUp.SuperHotSpreadShot) {
 				thing = thing.rotate(0, 0, spreadAmount, true);
 				this.fireShot(thing);
 				thing = thing.rotate(0, 0, -2 * spreadAmount, true);

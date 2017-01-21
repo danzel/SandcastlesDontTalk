@@ -1,6 +1,7 @@
 export enum PowerUp {
 	//None,
 	SuperHot,
+	SuperHotSpreadShot,
 	Walls,
 	RealBulletHell,
 
