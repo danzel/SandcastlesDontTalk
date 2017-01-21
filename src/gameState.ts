@@ -25,6 +25,7 @@ export default class GameState extends Phaser.State {
 	scoreText: Array<Phaser.Text>;
 
 	init() {
+		this.defaultFrameRate = 0.016666666666666666;
 		//TODO
 	}
 
@@ -64,9 +65,12 @@ export default class GameState extends Phaser.State {
 
 	}
 
+
+	defaultFrameRate: number;
 	create() {
 		let xRight = 20;
 		let yBot = 130;
+
 
 		this.scoreText = [
 			this.add.text(xRight, 0, '' + globalScore[0], { font: '100px ' + Globals.FontName, fill: '#ffffff' }),
@@ -134,6 +138,8 @@ export default class GameState extends Phaser.State {
 	}
 
 	update() {
+
+		
 		//console.log(this.input.gamepad.supported, this.input.gamepad.active, this.input.gamepad.pad1.connected, this.input.gamepad.pad1.axis(Phaser.Gamepad.AXIS_0));
 
 		this.players.forEach(p => p.update());
@@ -231,6 +237,20 @@ export default class GameState extends Phaser.State {
 				this.createShot(10, Globals.ScreenHeight - 10, this.bulletHellDir);
 
 				this.bulletHellDir = this.bulletHellDir.rotate(0, 0, 10 + Math.random() * 2, true);
+			}
+		}
+
+		if (this.powerUp == PowerUp.SuperHot) {
+			let alivePlayers = this.players.filter(p => !p.isDead);
+			if (alivePlayers.length > 0) {
+				let scaler = 0;
+				alivePlayers.forEach(p => scaler += new Phaser.Point(p.body.velocity.x, p.body.velocity.y).distance(new Phaser.Point(0, 0)));
+				scaler /= alivePlayers.length;
+				scaler /= Globals.PlayerSpeed;
+				scaler *= 1.5;
+				this.game.physics.p2.frameRate = this.defaultFrameRate * scaler;
+			} else {
+				this.game.physics.p2.frameRate = this.defaultFrameRate;
 			}
 		}
 	}
