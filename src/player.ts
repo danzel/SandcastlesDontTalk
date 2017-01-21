@@ -1,11 +1,12 @@
 import * as Globals from './globals';
 import { PowerUp } from './powerUp';
 
+const toEdge = 200;
 const startPoses = [
-	[100, 100],
-	[Globals.ScreenWidth - 100, 100],
-	[Globals.ScreenWidth - 100, Globals.ScreenHeight - 100],
-	[100, Globals.ScreenHeight - 100]
+	[toEdge, toEdge],
+	[Globals.ScreenWidth - toEdge, toEdge],
+	[Globals.ScreenWidth - toEdge, Globals.ScreenHeight - toEdge],
+	[toEdge, Globals.ScreenHeight - toEdge]
 ]
 
 const bulletHellStartPoses = [
