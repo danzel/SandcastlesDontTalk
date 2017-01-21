@@ -149,6 +149,7 @@ export class Player {
 		let y = this.sprite.y + Globals.PlayerRadius - Globals.ShotRadius + thing.y * (Globals.PlayerRadius + Globals.ShotAwayDist);
 		let shot = this.pad.game.add.sprite(x, y, 'shot_' + this.playerNumber);
 		shot.scale.set(3 * Globals.ShotRadius / 136);
+		shot.blendMode = PIXI.blendModes.ADD;
 		//shot.beginFill(this.color, 0.7);
 		//shot.drawCircle(0, 0, Globals.ShotRadius * 2);
 

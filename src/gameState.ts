@@ -314,6 +314,7 @@ export default class GameState extends Phaser.State {
 		//TODO move player code here? and then just have one
 
 		let shot = this.game.add.sprite(x, y, 'shot_0');
+		shot.blendMode = PIXI.blendModes.ADD;
 		shot.scale.set(3 * Globals.ShotRadius / 136);
 
 		this.game.physics.p2.enable(shot);
