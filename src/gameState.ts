@@ -32,7 +32,7 @@ export default class GameState extends Phaser.State {
 		this.shots.length = 0;
 		this.players.length = 0;
 		this.gameHasEnded = false;
-		this.powerUp = PowerUp.MachineGun;//Math.floor(Math.random() * PowerUp.Count);
+		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
 
 		this.lastBulletHellShot = this.game.time.totalElapsedSeconds();
 
@@ -58,6 +58,7 @@ export default class GameState extends Phaser.State {
 		this.load.image('shot_0', require('./assets/images/shots/Shrapnel.png'));
 
 		this.load.image('bg', require('./assets/images/Background.png'));
+		this.load.image('walls', require('./assets/images/Walls.png'));
 
 		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
 		this.load.audio('explode', require('./assets/sounds/explode.m4a'));
@@ -137,6 +138,8 @@ export default class GameState extends Phaser.State {
 
 		if (this.powerUp == PowerUp.Walls) {
 			this.addWalls();
+
+			this.add.sprite(0,0, 'walls').sendToBack();
 		}
 
 		bg.sendToBack();
@@ -255,6 +258,8 @@ export default class GameState extends Phaser.State {
 			} else {
 				this.game.physics.p2.frameRate = this.defaultFrameRate;
 			}
+		} else {
+			this.game.physics.p2.frameRate = this.defaultFrameRate;
 		}
 
 		if (this.powerUp == PowerUp.Wrap) {
@@ -360,7 +365,7 @@ export default class GameState extends Phaser.State {
 
 		places.forEach(p => {
 			let wall = this.game.add.sprite(p[0], p[1], '1px');
-			this.game.physics.p2.enable(wall, Globals.DebugRender);
+			this.game.physics.p2.enable(wall);
 			let wallBody = <Phaser.Physics.P2.Body>wall.body;
 			wallBody.clearShapes();
 			wallBody.addRectangle(p[2], p[3]);
