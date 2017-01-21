@@ -58,13 +58,13 @@ export default class GameState extends Phaser.State {
 		this.players.forEach(p => p.update());
 
 		this.game.physics.arcade.collide(this.collisionGroup, undefined, (a, b, c) => {
-			if (a.player) {
+			if (a.player && a.player != b.shotBy) {
 				let p = <Player>a.player;
 				this.createExplosion(p.sprite.x, p.sprite.y);
 				p.sprite.destroy();
 				p.isDead = true;
 			}
-			if (b.player) {
+			if (b.player && b.player != a.shotBy) {
 				let p = <Player>b.player;
 				this.createExplosion(p.sprite.x, p.sprite.y);
 				p.sprite.destroy();
@@ -106,6 +106,40 @@ export default class GameState extends Phaser.State {
 
 			}
 		}
+
+
+		this.collisionGroup.children.forEach(c => {
+			(<any>c).shouldBeSlowNow = false;
+		});
+
+		this.players.forEach(p => {
+			this.collisionGroup.children.forEach(c => {
+				let a = <any>c;
+				if (!(a).player) { //A shot (?)
+					//TODO: Distance
+					let body = <Phaser.Physics.Arcade.Body>a.body;
+					
+					let dist = body.position.distance(p.body.position);
+
+					if (dist < Globals.SlowDownRange) {
+						a.shouldBeSlowNow = true;
+					}
+				}
+			})
+		})
+
+		this.collisionGroup.children.forEach(c => {
+			let a = <any>c;
+			let body = <Phaser.Physics.Arcade.Body>a.body;
+			if (!a.shouldBeSlowNow && a.isSlowNow) {
+				body.velocity.multiply(4, 4);
+				a.isSlowNow = false;
+			}
+			if (a.shouldBeSlowNow && !a.isSlowNow) {
+				body.velocity.multiply(0.25, 0.25);
+				a.isSlowNow = true;
+			}
+		});
 	}
 
 	createExplosion(x, y) {

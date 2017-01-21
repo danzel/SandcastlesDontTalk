@@ -9,3 +9,5 @@ export const ShotAwayDist = 30;
 
 export const PlayerSpeed = 300;
 export const ShotSpeed = 400;
+
+export const SlowDownRange = 150;

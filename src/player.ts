@@ -64,14 +64,21 @@ export class Player {
 				this.pad.game.state.start('game');
 			}
 		}
+
+		let circle = this.pad.game.add.graphics(0, 0);
+		this.sprite.addChild(circle);
+
+		circle.lineStyle(1, this.color, 0.5);
+		circle.beginFill(0xffffff, 0.3);
+		circle.drawCircle(0, 0, Globals.SlowDownRange * 2);
 	}
 
 	update() {
-		if (!this.pad.connected) return;
+		if (!this.pad.connected || this.isDead) return;
 
 		let speed = Globals.PlayerSpeed;
-		//if (this.powerUp == PowerUp.Speedy)
-			//speed *= 2;
+		if (this.powerUp == PowerUp.Speedy)
+			speed *= 2;
 		this.body.velocity.set(this.pad.axis(0) * speed, this.pad.axis(1) * speed)
 
 		let timeSinceLast = this.pad.game.time.totalElapsedSeconds() - this.lastShot;
