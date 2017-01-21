@@ -22,6 +22,7 @@ export default class GameState extends Phaser.State {
 	gameHasEnded = false;
 	powerUp: PowerUp;
 	explodeSound: Phaser.Sound;
+	scoreText: Array<Phaser.Text>;
 
 	init() {
 		//TODO
@@ -30,7 +31,7 @@ export default class GameState extends Phaser.State {
 	preload() {
 		this.players.length = 0;
 		this.gameHasEnded = false;
-		this.powerUp = PowerUp.Walls;//Math.floor(Math.random() * PowerUp.Count);
+		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
 
 		this.lastBulletHellShot = this.game.time.totalElapsedSeconds();
 
@@ -58,11 +59,12 @@ export default class GameState extends Phaser.State {
 		let xRight = 80;
 		let yBot = 100;
 
-		this.add.text(10, 10, '' + globalScore[0], { font: '100px Arial', fill: '#ffffff' });
-		this.add.text(Globals.ScreenWidth - xRight, 10, '' + globalScore[1], { font: '100px Arial', fill: '#ffffff' });
-		this.add.text(Globals.ScreenWidth - xRight, Globals.ScreenHeight - yBot, '' + globalScore[2], { font: '100px Arial', fill: '#ffffff' });
-		this.add.text(10, Globals.ScreenHeight - yBot, '' + globalScore[3], { font: '100px Arial', fill: '#ffffff' });
-
+		this.scoreText = [
+		this.add.text(10, 10, '' + globalScore[0], { font: '100px Arial', fill: '#ffffff' }),
+		this.add.text(Globals.ScreenWidth - xRight, 10, '' + globalScore[1], { font: '100px Arial', fill: '#ffffff' }),
+		this.add.text(Globals.ScreenWidth - xRight, Globals.ScreenHeight - yBot, '' + globalScore[2], { font: '100px Arial', fill: '#ffffff' }),
+		this.add.text(10, Globals.ScreenHeight - yBot, '' + globalScore[3], { font: '100px Arial', fill: '#ffffff' })
+		];
 		let pt = this.add.text(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2, PowerUp[this.powerUp], {
 			font: '100px Arial', fill: '#ffffff'
 		});
@@ -132,6 +134,7 @@ export default class GameState extends Phaser.State {
 				text.anchor.setTo(0.5, 0.5);
 
 				globalScore[alive[0].playerNumber - 1]++;
+				this.scoreText[alive[0].playerNumber - 1].text = '' + globalScore[alive[0].playerNumber - 1];
 
 			} else if (amountAlive == 0) {
 				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px Bangers', fill: '#dddddd', align: 'center' });
@@ -162,6 +165,14 @@ export default class GameState extends Phaser.State {
 					}
 				}
 			})
+
+			if (!p.pad.connected) {
+				console.log('killing it')
+				p.isDead = true;
+				p.sprite.destroy();
+
+				this.scoreText[p.playerNumber - 1].destroy();
+			}
 		})
 
 		this.collisionGroup.children.forEach(c => {
@@ -220,6 +231,10 @@ export default class GameState extends Phaser.State {
 		p.isDead = true;
 
 		this.game.camera.shake(0.02, 200);
+
+		if (!this.gameHasEnded) {
+			this.scoreText[p.playerNumber - 1].alpha = 0.3;
+		}
 	}
 
 	hackVelocityMultiplier(body: Phaser.Physics.P2.Body, amount: number) {
