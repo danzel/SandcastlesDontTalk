@@ -6,7 +6,7 @@ import { Player } from './player';
 declare function require(url: string): string;
 
 let globalScore = [
-	0,0,0,0
+	0, 0, 0, 0
 ];
 
 
@@ -34,6 +34,8 @@ export default class GameState extends Phaser.State {
 		this.collisionGroup = this.game.add.physicsGroup(Phaser.Physics.ARCADE);
 
 		this.load.image('1px', require('./assets/images/1px.png'));
+
+		this.load.image('player', require('./assets/images/Ship1.png'));
 	}
 
 	create() {
@@ -58,17 +60,13 @@ export default class GameState extends Phaser.State {
 		this.players.forEach(p => p.update());
 
 		this.game.physics.arcade.collide(this.collisionGroup, undefined, (a, b, c) => {
-			if (a.player && a.player != b.shotBy) {
+			if (a.player) {
 				let p = <Player>a.player;
-				this.createExplosion(p.sprite.x, p.sprite.y);
-				p.sprite.destroy();
-				p.isDead = true;
+				this.killPlayer(p);
 			}
-			if (b.player && b.player != a.shotBy) {
+			if (b.player) {
 				let p = <Player>b.player;
-				this.createExplosion(p.sprite.x, p.sprite.y);
-				p.sprite.destroy();
-				p.isDead = true;
+				this.killPlayer(p);
 			}
 
 			if (a.shotBy && b.shotBy && a.shotBy != b.shotBy) {
@@ -83,7 +81,7 @@ export default class GameState extends Phaser.State {
 				bSprite.destroy();
 
 				//make magic
-				this.createExplosion(midX, midY);
+				this.createExplosion(midX, midY, 8);
 
 			}
 		});
@@ -113,12 +111,15 @@ export default class GameState extends Phaser.State {
 		});
 
 		this.players.forEach(p => {
+			if (p.isDead)
+				return;
+				
 			this.collisionGroup.children.forEach(c => {
 				let a = <any>c;
 				if (!(a).player) { //A shot (?)
 					//TODO: Distance
 					let body = <Phaser.Physics.Arcade.Body>a.body;
-					
+
 					let dist = body.position.distance(p.body.position);
 
 					if (dist < Globals.SlowDownRange) {
@@ -131,22 +132,35 @@ export default class GameState extends Phaser.State {
 		this.collisionGroup.children.forEach(c => {
 			let a = <any>c;
 			let body = <Phaser.Physics.Arcade.Body>a.body;
-			if (!a.shouldBeSlowNow && a.isSlowNow) {
-				body.velocity.multiply(4, 4);
-				a.isSlowNow = false;
-			}
-			if (a.shouldBeSlowNow && !a.isSlowNow) {
-				body.velocity.multiply(0.25, 0.25);
-				a.isSlowNow = true;
+
+			if (a.isInInitialSlowArea) {
+				if (!a.shouldBeSlowNow)
+					a.isInInitialSlowArea = false;
+			} else {
+				if (!a.shouldBeSlowNow && a.isSlowNow) {
+					body.velocity.multiply(4, 4);
+					a.isSlowNow = false;
+				}
+				if (a.shouldBeSlowNow && !a.isSlowNow) {
+					body.velocity.multiply(0.25, 0.25);
+					a.isSlowNow = true;
+				}
 			}
 		});
 	}
 
-	createExplosion(x, y) {
+	killPlayer(p: Player) {
+		this.createExplosion(p.sprite.x, p.sprite.y, 16);
+		p.sprite.destroy();
+		p.isDead = true;
+
+		this.game.camera.shake(0.02, 200);
+	}
+
+	createExplosion(x, y, explosionSize) {
 
 		let directions = new Array<Phaser.Point>();
 
-		let explosionSize = 8;
 		for (var i = 0; i < explosionSize; i++) {
 			let a = new Phaser.Point(1, 0);
 			a = a.rotate(0, 0, i * 360 / explosionSize, true);

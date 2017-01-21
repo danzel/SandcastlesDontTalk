@@ -71,6 +71,11 @@ export class Player {
 		circle.lineStyle(1, this.color, 0.5);
 		circle.beginFill(0xffffff, 0.3);
 		circle.drawCircle(0, 0, Globals.SlowDownRange * 2);
+
+		//let texture = this.pad.game.add.sprite(0, 0, 'player');
+		//texture.anchor.set(0.5);
+		//texture.scale.set(0.3);
+		//this.sprite.addChild(texture);
 	}
 
 	update() {
@@ -78,7 +83,7 @@ export class Player {
 
 		let speed = Globals.PlayerSpeed;
 		if (this.powerUp == PowerUp.Speedy)
-			speed *= 2;
+			speed *= 1.6;
 		this.body.velocity.set(this.pad.axis(0) * speed, this.pad.axis(1) * speed)
 
 		let timeSinceLast = this.pad.game.time.totalElapsedSeconds() - this.lastShot;
@@ -128,7 +133,7 @@ export class Player {
 
 		let shotSpeed = Globals.ShotSpeed;
 		if (this.powerUp == PowerUp.Speedy) {
-			shotSpeed *= 1.6;
+			shotSpeed *= 2;
 		}
 		shotBody.velocity.set(
 			thing.x * shotSpeed,
@@ -137,6 +142,7 @@ export class Player {
 		shotBody.bounce.set(1);
 		(<any>shot).shotBy = this; //HACK
 		(<any>shot).color = this.color;//hack
+		(<any>shot).isInInitialSlowArea = true;//hack
 
 		this.globalCollisionGroup.add(shot);
 
