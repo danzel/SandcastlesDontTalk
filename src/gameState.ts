@@ -10,6 +10,7 @@ let wonLast = -1;
 let globalScore = [
 	0, 0, 0, 0
 ];
+let lastPowerUp: PowerUp = -1;
 
 
 
@@ -35,7 +36,10 @@ export default class GameState extends Phaser.State {
 		this.shots.length = 0;
 		this.players.length = 0;
 		this.gameHasEnded = false;
-		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
+		do {
+			this.powerUp = Math.floor(Math.random() * PowerUp.Count);
+		} while (this.powerUp == lastPowerUp);
+		lastPowerUp = this.powerUp;
 
 		this.lastBulletHellShot = this.game.time.totalElapsedSeconds();
 
