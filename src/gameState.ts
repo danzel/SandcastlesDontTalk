@@ -8,7 +8,7 @@ import { PowerUp } from './powerUp';
 declare function require(url: string): string;
 
 let globalScore = [
-	0, 0, 0, 0
+	10, 10, 10, 10
 ];
 
 
@@ -47,7 +47,10 @@ export default class GameState extends Phaser.State {
 
 		this.load.image('1px', require('./assets/images/1px.png'));
 
-		this.load.image('player', require('./assets/images/Ship1.png'));
+		this.load.image('player_1', require('./assets/images/space/RedSpaceship.png'));
+		this.load.image('player_2', require('./assets/images/space/GreenSpaceship.png'));
+		this.load.image('player_3', require('./assets/images/space/BlueSpaceship.png'));
+		this.load.image('player_4', require('./assets/images/space/YellowSpaceship.png'));
 
 		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
 		this.load.audio('explode', require('./assets/sounds/explode.m4a'));
@@ -56,17 +59,21 @@ export default class GameState extends Phaser.State {
 	}
 
 	create() {
-		let xRight = 80;
-		let yBot = 100;
+		let xRight = 20;
+		let yBot = 130;
 
 		this.scoreText = [
-		this.add.text(10, 10, '' + globalScore[0], { font: '100px Arial', fill: '#ffffff' }),
-		this.add.text(Globals.ScreenWidth - xRight, 10, '' + globalScore[1], { font: '100px Arial', fill: '#ffffff' }),
-		this.add.text(Globals.ScreenWidth - xRight, Globals.ScreenHeight - yBot, '' + globalScore[2], { font: '100px Arial', fill: '#ffffff' }),
-		this.add.text(10, Globals.ScreenHeight - yBot, '' + globalScore[3], { font: '100px Arial', fill: '#ffffff' })
+			this.add.text(xRight, 0, '' + globalScore[0], { font: '100px ' + Globals.FontName, fill: '#ffffff' }),
+			this.add.text(Globals.ScreenWidth - xRight, 0, '' + globalScore[1], { font: '100px ' + Globals.FontName, fill: '#ffffff' }),
+			this.add.text(Globals.ScreenWidth - xRight, Globals.ScreenHeight - yBot, '' + globalScore[2], { font: '100px ' + Globals.FontName, fill: '#ffffff' }),
+			this.add.text(xRight, Globals.ScreenHeight - yBot, '' + globalScore[3], { font: '100px ' + Globals.FontName, fill: '#ffffff' })
 		];
+		this.scoreText[1].anchor.set(1, 0);
+		this.scoreText[2].anchor.set(1, 0);
+		this.scoreText.forEach(s => s.sendToBack());
+
 		let pt = this.add.text(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2, PowerUp[this.powerUp], {
-			font: '100px Arial', fill: '#ffffff'
+			font: '100px ' + Globals.FontName, fill: '#ffffff'
 		});
 		pt.anchor.set(0.5);
 		let tween = this.game.add.tween(pt);
@@ -130,14 +137,14 @@ export default class GameState extends Phaser.State {
 
 			if (amountAlive == 1) {
 
-				let text = this.add.text(this.world.centerX, this.world.centerY, ' PLAYER ' + alive[0].playerNumber + ' WINS! ', { font: '100px Bangers', fill: '#dddddd', align: 'center' });
+				let text = this.add.text(this.world.centerX, this.world.centerY, ' PLAYER ' + alive[0].playerNumber + ' WINS! ', { font: '100px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
 				text.anchor.setTo(0.5, 0.5);
 
 				globalScore[alive[0].playerNumber - 1]++;
 				this.scoreText[alive[0].playerNumber - 1].text = '' + globalScore[alive[0].playerNumber - 1];
 
 			} else if (amountAlive == 0) {
-				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px Bangers', fill: '#dddddd', align: 'center' });
+				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
 				text.anchor.setTo(0.5, 0.5);
 
 			}

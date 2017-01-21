@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import * as WebFont from 'webfontloader';
+import * as Globals from './globals';
 
 export default class LoadingState extends Phaser.State {
 	init() {
@@ -9,7 +10,7 @@ export default class LoadingState extends Phaser.State {
 	preload() {
 		WebFont.load({
 			google: {
-				families: ['Bangers']
+				families: [Globals.FontName]
 			},
 			active: () => this.fontsLoaded()
 		})

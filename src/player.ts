@@ -27,6 +27,7 @@ export class Player {
 
 	color: any;
 	sprite: Phaser.Sprite;
+	realSprite: Phaser.Sprite;
 	body: Phaser.Physics.P2.Body;
 
 	lastShot: number;
@@ -69,6 +70,7 @@ export class Player {
 			}
 		}
 
+		
 		let circle = this.pad.game.add.graphics(0, 0);
 		this.sprite.addChild(circle);
 
@@ -76,12 +78,15 @@ export class Player {
 		circle.beginFill(0xffffff, 0.3);
 		circle.drawCircle(0, 0, Globals.SlowDownRange * 2);
 
-		circle.beginFill(this.color, 1);
-		circle.drawCircle(0, 0, Globals.PlayerRadius * 2);
-		//let texture = this.pad.game.add.sprite(0, 0, 'player');
-		//texture.anchor.set(0.5);
-		//texture.scale.set(0.3);
-		//this.sprite.addChild(texture);
+		//circle.beginFill(0, 1);
+		//circle.beginFill(this.color, 1);
+		//circle.drawCircle(0, 0, Globals.PlayerRadius * 2);
+
+		this.realSprite = this.pad.game.add.sprite(0, 0, 'player_' + playerNumber);
+		this.realSprite.anchor.set(0.5, 0.59);
+		this.realSprite.scale.set(0.2);
+		this.sprite.addChild(this.realSprite);
+		
 	}
 
 	update() {
@@ -94,6 +99,7 @@ export class Player {
 		this.body.moveRight(this.pad.axis(0) * speed);
 		this.body.moveDown(this.pad.axis(1) * speed);
 
+		this.realSprite.angle = new Phaser.Point(this.body.velocity.x, this.body.velocity.y).angle(new Phaser.Point(0, 0), true) - 90;
 		let timeSinceLast = this.pad.game.time.totalElapsedSeconds() - this.lastShot;
 		var thing = new Phaser.Point(this.pad.axis(2), this.pad.axis(3));
 		let length = thing.distance(new Phaser.Point(0, 0));

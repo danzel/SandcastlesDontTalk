@@ -11,3 +11,5 @@ export const PlayerSpeed = 300;
 export const ShotSpeed = 400;
 
 export const SlowDownRange = 150;
+
+export const FontName = 'Carter One';
