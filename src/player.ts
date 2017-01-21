@@ -103,7 +103,7 @@ export class Player {
 			timeBetweenShots *= 2;
 		}
 
-		if (timeSinceLast > timeBetweenShots && length > 0.7) {
+		if (this.powerUp != PowerUp.RealBulletHell && timeSinceLast > timeBetweenShots && length > 0.7) {
 			this.lastShot = this.pad.game.time.totalElapsedSeconds();
 
 			let spreadAmount = 10;
@@ -125,10 +125,6 @@ export class Player {
 	}
 
 	fireShot(thing: Phaser.Point) {
-
-		if (this.powerUp == PowerUp.RealBulletHell)
-			return;
-
 		let shot = this.pad.game.add.sprite(
 			this.sprite.x + Globals.PlayerRadius - Globals.ShotRadius + thing.x * (Globals.PlayerRadius + Globals.ShotAwayDist),
 			this.sprite.y + Globals.PlayerRadius - Globals.ShotRadius + thing.y * (Globals.PlayerRadius + Globals.ShotAwayDist));
