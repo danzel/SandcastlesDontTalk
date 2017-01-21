@@ -16,12 +16,11 @@ const bulletHellStartPoses = [
 ]
 
 const colors = [
-	0xff0000,
-	0x00ff00,
-	0x0000ff,
-	0xffffff
+	0xffcccc,
+	0xccffcc,
+	0xccccff,
+	0xffeebb
 ];
-
 
 export class Player {
 
@@ -74,8 +73,8 @@ export class Player {
 		let circle = this.pad.game.add.graphics(0, 0);
 		this.sprite.addChild(circle);
 
-		//circle.lineStyle(1, this.color, 0.5);
-		circle.beginFill(0xffffff, 0.3);
+		circle.lineStyle(2, 0xffffff, 0.2);
+		circle.beginFill(this.color, 0.2);
 		circle.drawCircle(0, 0, Globals.SlowDownRange * 2);
 
 		//circle.beginFill(0, 1);
