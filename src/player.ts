@@ -16,10 +16,10 @@ const bulletHellStartPoses = [
 ]
 
 const colors = [
-	'#ff0000',
-	'#00ff00',
-	'#0000ff',
-	'#ffffff'
+	0xff0000,
+	0x00ff00,
+	0x0000ff,
+	0xffffff
 ];
 
 
@@ -72,10 +72,12 @@ export class Player {
 		let circle = this.pad.game.add.graphics(0, 0);
 		this.sprite.addChild(circle);
 
-		circle.lineStyle(1, this.color, 0.5);
+		//circle.lineStyle(1, this.color, 0.5);
 		circle.beginFill(0xffffff, 0.3);
 		circle.drawCircle(0, 0, Globals.SlowDownRange * 2);
 
+		circle.beginFill(this.color, 1);
+		circle.drawCircle(0, 0, Globals.PlayerRadius * 2);
 		//let texture = this.pad.game.add.sprite(0, 0, 'player');
 		//texture.anchor.set(0.5);
 		//texture.scale.set(0.3);
@@ -129,11 +131,13 @@ export class Player {
 	}
 
 	fireShot(thing: Phaser.Point) {
-		let shot = this.pad.game.add.sprite(
-			this.sprite.x + Globals.PlayerRadius - Globals.ShotRadius + thing.x * (Globals.PlayerRadius + Globals.ShotAwayDist),
-			this.sprite.y + Globals.PlayerRadius - Globals.ShotRadius + thing.y * (Globals.PlayerRadius + Globals.ShotAwayDist));
+		let x = this.sprite.x + Globals.PlayerRadius - Globals.ShotRadius + thing.x * (Globals.PlayerRadius + Globals.ShotAwayDist);
+		let y = this.sprite.y + Globals.PlayerRadius - Globals.ShotRadius + thing.y * (Globals.PlayerRadius + Globals.ShotAwayDist);
+		let shot = this.pad.game.add.graphics(x, y);
+		shot.beginFill(this.color, 0.7);
+		shot.drawCircle(0, 0, Globals.ShotRadius * 2);
 
-		this.pad.game.physics.p2.enable(shot, Globals.DebugRender);
+		this.pad.game.physics.p2.enable(shot);
 		let shotBody = <Phaser.Physics.P2.Body>shot.body;
 		shotBody.setCircle(Globals.ShotRadius);
 		shotBody.collideWorldBounds = true;

@@ -30,7 +30,7 @@ export default class GameState extends Phaser.State {
 	preload() {
 		this.players.length = 0;
 		this.gameHasEnded = false;
-		this.powerUp = Math.floor(Math.random() * PowerUp.Count);
+		this.powerUp = PowerUp.Walls;//Math.floor(Math.random() * PowerUp.Count);
 
 		this.lastBulletHellShot = this.game.time.totalElapsedSeconds();
 
@@ -111,12 +111,9 @@ export default class GameState extends Phaser.State {
 			}
 		});
 
-		let wall = this.game.add.sprite(Globals.ScreenWidth / 2, Globals.ScreenHeight / 2, '1px');
-		this.game.physics.p2.enable(wall, Globals.DebugRender);
-		let wallBody = <Phaser.Physics.P2.Body>wall.body;
-		wallBody.clearShapes();
-		wallBody.addRectangle(50, 500);
-		wallBody.static = true;
+		if (this.powerUp == PowerUp.Walls) {
+			this.addWalls();
+		}
 	}
 
 	update() {
@@ -218,7 +215,7 @@ export default class GameState extends Phaser.State {
 
 	killPlayer(p: Player) {
 		this.explodeSound.play();
-		this.createExplosion(p.sprite.x, p.sprite.y, 16);
+		this.createExplosion(p.sprite.x, p.sprite.y, 15);
 		p.sprite.destroy();
 		p.isDead = true;
 
@@ -250,9 +247,9 @@ export default class GameState extends Phaser.State {
 
 	createShot(x, y, dir) {
 		//TODO move player code here? and then just have one
-		
-		let shot = this.game.add.sprite(x, y);
-		this.game.physics.p2.enable(shot, Globals.DebugRender);
+
+		let shot = this.game.add.graphics(x, y);
+		this.game.physics.p2.enable(shot);
 		let shotBody = <Phaser.Physics.P2.Body>shot.body;
 		shotBody.setCircle(Globals.ShotRadius);
 		shotBody.collideWorldBounds = true;
@@ -261,6 +258,9 @@ export default class GameState extends Phaser.State {
 		shotBody.damping = 0;
 
 		this.collisionGroup.add(shot);
+
+		shot.beginFill(0x999999, 1);
+		shot.drawCircle(0, 0, Globals.ShotRadius * 2);
 	}
 
 
@@ -274,5 +274,40 @@ export default class GameState extends Phaser.State {
 				this.game.debug.body(<any>c, (<any>c).color);
 			})
 		}
+	}
+
+
+	addWalls() {
+
+		let places = [
+			[
+				500, Globals.ScreenHeight / 2,
+				400, 40
+			],
+			[
+				Globals.ScreenWidth - 500, Globals.ScreenHeight / 2,
+				400, 40
+			],
+			[
+				Globals.ScreenWidth - 500 - 200, Globals.ScreenHeight / 2,
+				40, 600
+			],
+			[
+				500 + 200, Globals.ScreenHeight / 2,
+				40, 600
+			]
+
+
+		]
+
+		places.forEach(p => {
+			let wall = this.game.add.sprite(p[0], p[1], '1px');
+			this.game.physics.p2.enable(wall, Globals.DebugRender);
+			let wallBody = <Phaser.Physics.P2.Body>wall.body;
+			wallBody.clearShapes();
+			wallBody.addRectangle(p[2], p[3]);
+			wallBody.static = true;
+		})
+
 	}
 }

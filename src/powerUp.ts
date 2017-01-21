@@ -1,5 +1,6 @@
 export enum PowerUp {
 	//None,
+	Walls,
 	RealBulletHell,
 
 	Speedy,
