@@ -21,6 +21,7 @@ export default class GameState extends Phaser.State {
 
 	gameHasEnded = false;
 	powerUp: PowerUp;
+	explodeSound: Phaser.Sound;
 
 	init() {
 		//TODO
@@ -40,6 +41,11 @@ export default class GameState extends Phaser.State {
 		this.load.image('1px', require('./assets/images/1px.png'));
 
 		this.load.image('player', require('./assets/images/Ship1.png'));
+
+		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
+		this.load.audio('explode', require('./assets/sounds/explode.m4a'));
+		this.game.sound.setDecodedCallback(['shoot', 'explode'], () => { }, this);
+
 	}
 
 	create() {
@@ -67,6 +73,7 @@ export default class GameState extends Phaser.State {
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad3, 3, this.powerUp));
 		this.players.push(new Player(this.collisionGroup, this.input.gamepad.pad4, 4, this.powerUp));
 
+		this.explodeSound = this.game.add.sound('explode');
 	}
 
 	update() {
@@ -161,10 +168,15 @@ export default class GameState extends Phaser.State {
 					a.isSlowNow = true;
 				}
 			}
+			
+			if (this.powerUp == PowerUp.BulletsSlowDown && !(<any>a).player) {
+				body.velocity.multiply(0.99, 0.99);
+			}
 		});
 	}
 
 	killPlayer(p: Player) {
+		this.explodeSound.play();
 		this.createExplosion(p.sprite.x, p.sprite.y, 16);
 		p.sprite.destroy();
 		p.isDead = true;

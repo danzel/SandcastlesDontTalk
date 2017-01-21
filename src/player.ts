@@ -28,12 +28,16 @@ export class Player {
 
 	isDead = false;
 
+	shootSound: Phaser.Sound;
+
 	constructor(private globalCollisionGroup: Phaser.Group, public pad: Phaser.SinglePad, public playerNumber: number, powerUp: PowerUp) {
 		this.lastShot = this.pad.game.time.totalElapsedSeconds();
 
 		this.powerUp = powerUp;
 
 		pad.deadZone = 0;
+
+		this.shootSound = pad.game.add.audio('shoot');
 
 		this.sprite = pad.game.add.sprite(startPoses[playerNumber - 1][0], startPoses[playerNumber - 1][1], '1px');
 		(<any>this.sprite).player = this;//HACK
@@ -95,6 +99,8 @@ export class Player {
 			this.lastShot = this.pad.game.time.totalElapsedSeconds();
 
 			let spreadAmount = 10;
+
+			this.shootSound.play();
 
 			this.fireShot(thing);
 			if (this.powerUp == PowerUp.SpreadShot) {

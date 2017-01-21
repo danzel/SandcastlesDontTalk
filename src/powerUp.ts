@@ -4,6 +4,6 @@ export enum PowerUp {
 	MachineGun,
 	SpreadShot,
 
-
+	BulletsSlowDown,
 	Count
 }
