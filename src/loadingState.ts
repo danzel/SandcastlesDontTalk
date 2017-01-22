@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import * as WebFont from 'webfontloader';
 import * as Globals from './globals';
+import { PowerUp } from './powerUp';
 
 declare function require(url: string): string;
 
@@ -43,7 +44,19 @@ export default class LoadingState extends Phaser.State {
 
 		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
 		this.load.audio('explode', require('./assets/sounds/explode.m4a'));
-		this.game.sound.setDecodedCallback(['shoot', 'explode'], () => { }, this);
+		//Needed?
+		/*this.game.sound.setDecodedCallback([
+			'shoot', 'explode'
+		], () => { }, this);*/
+
+		this.load.audio(PowerUp[PowerUp.BulletsSlowDown], require('./assets/sounds/announcer/announcer-bulletsslowdown.m4a'));
+		this.load.audio(PowerUp[PowerUp.MachineGun], require('./assets/sounds/announcer/announcer-machinegun.m4a'));
+		this.load.audio(PowerUp[PowerUp.RealBulletHell], require('./assets/sounds/announcer/announcer-realbullethell.m4a'));
+		this.load.audio(PowerUp[PowerUp.Speedy], require('./assets/sounds/announcer/announcer-speedy.m4a'));
+		this.load.audio(PowerUp[PowerUp.SpreadShot], require('./assets/sounds/announcer/announcer-spreadshot.m4a'));
+		this.load.audio(PowerUp[PowerUp.SuperHot], require('./assets/sounds/announcer/announcer-superhot.m4a'));
+		this.load.audio(PowerUp[PowerUp.SuperHotSpreadShot], require('./assets/sounds/announcer/announcer-superhotspreadshot.m4a'));
+		this.load.audio(PowerUp[PowerUp.Walls], require('./assets/sounds/announcer/announcer-walls.m4a'));
 
 		this.input.gamepad.start();
 

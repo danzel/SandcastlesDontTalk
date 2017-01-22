@@ -58,6 +58,8 @@ export default class GameState extends Phaser.State {
 		let xRight = 20;
 		let yBot = 130;
 
+		this.add.audio(PowerUp[this.powerUp]).play();
+
 		this.sparkEmitter = this.game.add.emitter(0,0, 1000);
 		(<any>this.sparkEmitter).blendMode = PIXI.blendModes.ADD;
 		this.sparkEmitter.setAlpha(1, 0, 2000, Phaser.Easing.Cubic.In);
