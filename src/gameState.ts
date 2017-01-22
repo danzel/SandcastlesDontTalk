@@ -62,8 +62,8 @@ export default class GameState extends Phaser.State {
 		(<any>this.sparkEmitter).blendMode = PIXI.blendModes.ADD;
 		this.sparkEmitter.setAlpha(1, 0, 2000, Phaser.Easing.Cubic.In);
 		this.sparkEmitter.setRotation(0, 360);
-		this.sparkEmitter.setXSpeed(-100, 100);
-		this.sparkEmitter.setYSpeed(-100, 100);
+		this.sparkEmitter.setXSpeed(-30, 30);
+		this.sparkEmitter.setYSpeed(-30, 30);
 
 		this.sparkEmitter.makeParticles('particle_1'); //TODO: REAL PARTICLE GFX
 
@@ -134,9 +134,12 @@ export default class GameState extends Phaser.State {
 
 			if (this.shots.indexOf(a.sprite) >= 0 || this.shots.indexOf(b.sprite) >= 0) {
 				let sprite = a.sprite || b.sprite;
-				this.sparkEmitter.x = sprite.x;
-				this.sparkEmitter.y = sprite.y;
-				this.sparkEmitter.start(true, 2000, null, 5);
+				if (!sprite.hasParticledThisTick) {
+					this.sparkEmitter.x = sprite.x;
+					this.sparkEmitter.y = sprite.y;
+					this.sparkEmitter.start(true, 2000, null, 10);
+					sprite.hasParticledThisTick = true;
+				}
 			}
 		});
 
@@ -190,6 +193,7 @@ export default class GameState extends Phaser.State {
 
 		this.shots.forEach(c => {
 			(<any>c).shouldBeSlowNow = false;
+			(<any>c).hasParticledThisTick = false;
 		});
 
 		this.players.forEach(p => {
