@@ -54,6 +54,7 @@ export default class GameState extends Phaser.State {
 
 	defaultFrameRate: number;
 	create() {
+		this.camera.shake(0,0);
 		let bg = this.add.sprite(0, 0, 'bg');
 		let xRight = 20;
 		let yBot = 130;
