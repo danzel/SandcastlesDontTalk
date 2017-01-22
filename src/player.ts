@@ -86,14 +86,14 @@ export class Player {
 		//circle.drawCircle(0, 0, Globals.PlayerRadius * 2);
 
 		this.realSprite = this.pad.game.add.sprite(0, 0, 'player_' + playerNumber);
-		this.realSprite.anchor.set(0.5, 0.59);
-		this.realSprite.scale.set(0.2);
+		this.realSprite.anchor.set(0.5, 0.575);
 		this.sprite.addChild(this.realSprite);
 	}
 
 	addCrown() {
 		let crown = this.pad.game.add.sprite(0, -40, 'crown');
-		crown.anchor.set(0.5, 1);
+		crown.scale.set(0.8);
+		crown.anchor.set(0.53, -0.1);
 		this.sprite.addChild(crown);
 	}
 

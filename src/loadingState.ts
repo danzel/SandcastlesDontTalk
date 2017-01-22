@@ -39,6 +39,7 @@ export default class LoadingState extends Phaser.State {
 
 		this.load.image('bg', require('./assets/images/Background.png'));
 		this.load.image('walls', require('./assets/images/Walls.png'));
+		this.load.image('crown', require('./assets/images/Crown.png'));
 
 		this.load.audio('shoot', require('./assets/sounds/shoot.m4a'));
 		this.load.audio('explode', require('./assets/sounds/explode.m4a'));

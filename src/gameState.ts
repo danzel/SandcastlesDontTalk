@@ -38,7 +38,7 @@ export default class GameState extends Phaser.State {
 		this.shots.length = 0;
 		this.players.length = 0;
 		this.gameHasEnded = false;
-		do {
+		do { 
 			this.powerUp = Math.floor(Math.random() * PowerUp.Count);
 		} while (this.powerUp == lastPowerUp);
 		lastPowerUp = this.powerUp;
