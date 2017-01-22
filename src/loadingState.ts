@@ -62,6 +62,7 @@ export default class LoadingState extends Phaser.State {
 		this.load.audio(PowerUp[PowerUp.SuperHotSpreadShot], require('./assets/sounds/announcer/announcer-superhotspreadshot.m4a'));
 		this.load.audio(PowerUp[PowerUp.Walls], require('./assets/sounds/announcer/announcer-walls.m4a'));
 
+		this.load.audio('draw', require('./assets/sounds/announcer/draw.m4a'));
 		this.load.audio('win_1', require('./assets/sounds/announcer/player1win.m4a'));
 		this.load.audio('win_2', require('./assets/sounds/announcer/player2win.m4a'));
 		this.load.audio('win_3', require('./assets/sounds/announcer/player3win.m4a'));

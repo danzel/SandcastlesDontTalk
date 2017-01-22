@@ -184,6 +184,7 @@ export default class GameState extends Phaser.State {
 				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
 				text.anchor.setTo(0.5, 0.5);
 				wonLast = -1;
+				this.add.audio('draw').play();
 			}
 
 			if (this.gameHasEnded) {
