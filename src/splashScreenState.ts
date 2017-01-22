@@ -8,13 +8,14 @@ export default class LoadingState extends Phaser.State {
 	startToPlay: Phaser.Text;
 
 	create() {
-		let text = this.add.text(this.world.centerX, 100, 'I am the splash screen', { font: '16px Arial', fill: '#dddddd', align: 'center' });
-		text.anchor.setTo(0.5, 0.5);
 
-		this.padsText = this.add.text(this.world.centerX, this.world.height - 200, 'TODO', { font: '50px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
+		this.add.sprite(0, 0, 'SplashScreen');
+		this.add.sprite(0, 0, 'Title');
+
+		this.padsText = this.add.text(this.world.centerX, this.world.height - 300, 'TODO', { font: '50px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
 		this.padsText.anchor.setTo(0.5, 0.5);
 
-		this.startToPlay = this.add.text(this.world.centerX, this.world.height - 100, 'Press Start to Play', { font: '50px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
+		this.startToPlay = this.add.text(this.world.centerX, this.world.height - 200, 'Press Start to Play', { font: '50px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
 		this.startToPlay.anchor.setTo(0.5, 0.5);
 	}
 

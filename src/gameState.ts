@@ -177,6 +177,8 @@ export default class GameState extends Phaser.State {
 
 				wonLast = alive[0].playerNumber - 1;
 				alive[0].addCrown();
+				this.add.audio('win_' + alive[0].playerNumber).play();
+				
 
 			} else if (amountAlive == 0) {
 				let text = this.add.text(this.world.centerX, this.world.centerY, 'DRAW!!!', { font: '100px ' + Globals.FontName, fill: '#dddddd', align: 'center' });
